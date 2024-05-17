@@ -15,6 +15,11 @@ import MasonryList from "reanimated-masonry-list";
 import { BlurView } from "expo-blur";
 import { TabsStackScreenProps } from "../navigators/TabsNavigator";
 import SearchBar from "../components/SearchBar";
+import Animated, {
+  FadeInDown,
+  FadeInRight,
+  FadeInUp,
+} from "react-native-reanimated";
 
 const CATEGORIES = [
   "Ring",
@@ -90,7 +95,8 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
     <ScrollView showsVerticalScrollIndicator={false}>
       <SafeAreaView style={{ paddingVertical: 24, gap: 24 }}>
         {/* Header Section */}
-        <View
+        <Animated.View
+          entering={FadeInDown.delay(600).duration(1000).springify()}
           style={{
             paddingHorizontal: 24,
             flexDirection: "row",
@@ -137,11 +143,11 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
           >
             <Icons name="notifications" size={24} color={colors.text} />
           </TouchableOpacity>
-        </View>
+        </Animated.View>
+        {/* Search Section */}
         <SearchBar />
         {/* Grid Jewelries View */}
-        <View style={{ paddingHorizontal: 24 }}>
-          {/* Title bar */}
+        <View style={{ paddingHorizontal: 3 }}>
           <View
             style={{
               flexDirection: "row",
@@ -159,18 +165,18 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
               <Text style={{ color: colors.primary }}>See All</Text>
             </TouchableOpacity>
           </View>
-          <ScrollView showsHorizontalScrollIndicator={false} horizontal style={{ height: 200 }}>
-            <View
-              style={{ flexDirection: "row", alignItems: "center", gap: 12 }}
+          {/* Card Section */}
+          <ScrollView
+            showsHorizontalScrollIndicator={false}
+            horizontal
+            style={{ height: 200 }}
+          >
+            <Animated.View
+              entering={FadeInRight.delay(600).duration(1000).springify()}
+              style={{ flexDirection: "row", alignItems: "center", gap: 15 }}
             >
               {cardData.map((card, index) => (
-                <View
-                  key={card.id}
-                  style={
-  
-                       { width: 200, height: "100%" }
-                  }
-                >
+                <View key={card.id} style={{ width: 300 }}>
                   <Card
                     onPress={() =>
                       navigation.navigate("Details", { id: card.id })
@@ -180,7 +186,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
                   />
                 </View>
               ))}
-            </View>
+            </Animated.View>
           </ScrollView>
         </View>
 
@@ -196,28 +202,32 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
           renderItem={({ item, index }) => {
             const isSelected = categoryIndex === index;
             return (
-              <TouchableOpacity
-                onPress={() => setCategoryIndex(index)}
-                style={{
-                  backgroundColor: isSelected ? colors.primary : colors.card,
-                  paddingHorizontal: 20,
-                  paddingVertical: 12,
-                  borderRadius: 100,
-                  borderWidth: isSelected ? 0 : 1,
-                  borderColor: colors.border,
-                }}
+              <Animated.View
+                entering={FadeInUp.delay(600).duration(1000).springify()}
               >
-                <Text
+                <TouchableOpacity
+                  onPress={() => setCategoryIndex(index)}
                   style={{
-                    color: isSelected ? colors.background : colors.text,
-                    fontWeight: "600",
-                    fontSize: 14,
-                    opacity: isSelected ? 1 : 0.5,
+                    backgroundColor: isSelected ? colors.primary : colors.card,
+                    paddingHorizontal: 20,
+                    paddingVertical: 12,
+                    borderRadius: 100,
+                    borderWidth: isSelected ? 0 : 1,
+                    borderColor: colors.border,
                   }}
                 >
-                  {item}
-                </Text>
-              </TouchableOpacity>
+                  <Text
+                    style={{
+                      color: isSelected ? colors.background : colors.text,
+                      fontWeight: "600",
+                      fontSize: 14,
+                      opacity: isSelected ? 1 : 0.5,
+                    }}
+                  >
+                    {item}
+                  </Text>
+                </TouchableOpacity>
+              </Animated.View>
             );
           }}
         />
@@ -229,7 +239,10 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
           contentContainerStyle={{ paddingHorizontal: 12 }}
           showsVerticalScrollIndicator={false}
           renderItem={({ item, i }: any) => (
-            <View style={{ padding: 6 }}>
+            <Animated.View
+              entering={FadeInDown.delay(600).duration(1000).springify()}
+              style={{ padding: 6 }}
+            >
               <View
                 style={{
                   aspectRatio: i === 0 ? 1 : 2 / 3,
@@ -270,22 +283,6 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
                     >
                       {item.title}
                     </Text>
-                    <View
-                      style={{
-                        backgroundColor: colors.card,
-                        borderRadius: 100,
-                        height: 32,
-                        aspectRatio: 1,
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Icons
-                        name="favorite-border"
-                        size={20}
-                        color={colors.text}
-                      />
-                    </View>
                   </View>
                   <View style={{ flex: 1 }} />
                   <BlurView
@@ -324,7 +321,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
                   </BlurView>
                 </View>
               </View>
-            </View>
+            </Animated.View>
           )}
           onEndReachedThreshold={0.1}
         />

@@ -9,11 +9,11 @@ import Icons from "@expo/vector-icons/MaterialIcons";
 import { CompositeScreenProps } from "@react-navigation/native";
 import { RootStackScreenProps } from "./RootNavigator";
 import CustomBottomTabs from "../components/CustomBottomTabs";
+import CartScreen from "../screens/CartScreen";
 
 export type TabsStackParamList = {
   Home: undefined;
   Cart: undefined;
-  Payment: undefined;
   Profile: undefined;
 };
 const TabsStack = createBottomTabNavigator<TabsStackParamList>();
@@ -29,6 +29,7 @@ const TabsNavigator = () => {
     <TabsStack.Navigator
       screenOptions={{
         tabBarShowLabel: false,
+        headerTitleAlign: 'center'
       }}
       tabBar={(props) => <CustomBottomTabs {...props} />}
     >
@@ -44,8 +45,13 @@ const TabsNavigator = () => {
       />
       <TabsStack.Screen
         name="Cart"
-        component={Example}
+        component={CartScreen}
         options={{
+          headerShown: true,
+          headerTitleStyle: {
+            fontSize: 22,
+            fontWeight: '700'
+          },
           tabBarIcon(props) {
             return <Icons name="shopping-cart" {...props} />;
           },

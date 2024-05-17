@@ -1,16 +1,20 @@
 import {
   Image,
+  KeyboardAvoidingView,
+  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
+  useWindowDimensions,
 } from "react-native";
 import React, { useState } from "react";
-import { fonts } from "../utils/fonts";
 import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "@react-navigation/native";
 import { colors } from "../utils/color";
+import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
+import PrimaryButton from "../components/PrimaryButton";
 
 interface LoginScreenProps {
   onLogin: () => void; // Callback function to handle successful login
@@ -19,7 +23,8 @@ interface LoginScreenProps {
 const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const navigation = useNavigation();
+  const theme = useTheme();
+  const dimensions = useWindowDimensions();
   const [secureEntery, setSecureEntery] = useState(true);
 
   const handleLogin = () => {
@@ -31,101 +36,147 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     }
   };
   return (
-    <View style={styles.container}>
-      <View style={{ marginTop: "30%", marginVertical: 20 }}>
-        <Text style={styles.headingText}>Hey,</Text>
-        <Text style={styles.headingText}>Welcome</Text>
-        <Text style={styles.headingText}>Back</Text>
-      </View>
-      {/* form  */}
-      <View style={{ marginTop: 20 }}>
-        <View
+    <KeyboardAvoidingView behavior="position" style={{ flex: 1 }}>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: theme.colors.card,
+          minHeight: dimensions.height,
+        }}
+      >
+        <Animated.View
+          entering={FadeInUp.delay(200).duration(1000).springify()}
           style={{
-            borderWidth: 1,
-            borderColor: colors.secondary,
-            borderRadius: 100,
-            paddingHorizontal: 25,
-            paddingVertical: 10,
-            flexDirection: "row",
             alignItems: "center",
-            padding: 2,
-            marginVertical: 10,
+            flex: 1,
+            justifyContent: "center",
           }}
+          
         >
-          <Ionicons name={"mail-outline"} size={30} color={colors.secondary} />
-          <TextInput
-            style={{ flex: 1, paddingHorizontal: 10, fontWeight: "400" }}
-            placeholder="Enter your email"
-            placeholderTextColor={colors.secondary}
-            keyboardType="email-address"
-            onChangeText={setUsername}
-            value={username}
-          />
-        </View>
-        <View
-          style={{
-            borderWidth: 1,
-            borderColor: colors.secondary,
-            borderRadius: 100,
-            paddingHorizontal: 25,
-            paddingVertical: 10,
-            flexDirection: "row",
-            alignItems: "center",
-            padding: 2,
-            marginVertical: 10,
-          }}
-        >
-          <SimpleLineIcons name={"lock"} size={30} color={colors.secondary} />
-          <TextInput
-            style={{ flex: 1, paddingHorizontal: 10, fontWeight: "400" }}
-            placeholder="Enter your password"
-            placeholderTextColor={colors.secondary}
-            secureTextEntry={secureEntery}
-            onChangeText={setPassword}
-            value={password}
-          />
-          <TouchableOpacity
-            onPress={() => {
-              setSecureEntery((prev) => !prev);
-            }}
-          >
-            <SimpleLineIcons name={"eye"} size={20} color={colors.secondary} />
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity>
-          <Text
+          {/* <Image source={require('../assets/images/JewelryLogo.png')} style={{width: 688, height: 688}}/> */}
+        </Animated.View>
+
+        <View style={{ padding: 27, marginBottom: 30 }}>
+          <Animated.Text
+            entering={FadeInDown.duration(1000).springify()}
             style={{
-              textAlign: "right",
-              color: colors.primary,
-              fontWeight: "500",
-              marginVertical: 10,
+              fontSize: 40,
+              fontWeight: "800",
+              color: theme.colors.text,
             }}
           >
-            Forgot Password?
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            backgroundColor: colors.primary,
-            borderRadius: 100,
-            marginTop: 10,
-          }}
-          onPress={handleLogin}
-        >
-          <Text
+            {`Let's\nStarted`}
+          </Animated.Text>
+          <Animated.Text
+            entering={FadeInDown.delay(100).duration(1000).springify()}
             style={{
-              color: colors.white,
-              fontSize: 20,
-              fontWeight: "700",
-              textAlign: "center",
-              padding: 15,
+              opacity: 0.5,
+              marginTop: 16,
+              fontSize: 16,
+              color: theme.colors.text,
             }}
           >
-            Login
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+            To Register account, please contact to Admin
+          </Animated.Text>
+
+          <View style={{ alignItems: "center", gap: 16, marginTop: 32 }}>
+            <Animated.View
+              entering={FadeInDown.delay(200).duration(1000).springify()}
+              style={{ position: "relative", width: "100%" }}
+            >
+              <TextInput
+                placeholder="Your Email"
+                style={{
+                  fontSize: 16,
+                  fontWeight: "500",
+                  color: theme.colors.text,
+                  paddingLeft: 48,
+                  paddingRight: 12,
+                  height: 48,
+                  borderRadius: 12,
+                  backgroundColor: theme.colors.background,
+                  width: "100%",
+                }}
+                keyboardType="email-address"
+                onChangeText={setUsername}
+                value={username}
+              />
+              <Ionicons
+                name={"mail-outline"}
+                size={24}
+                color={theme.colors.text}
+                style={{
+                  position: "absolute",
+                  left: 12,
+                  top: 12,
+                  opacity: 0.5,
+                }}
+              />
+            </Animated.View>
+            <Animated.View
+              entering={FadeInDown.delay(400).duration(1000).springify()}
+              style={{
+                position: "relative",
+                width: "100%",
+                flexDirection: "row",
+              }}
+            >
+              <TextInput
+                placeholder="Your Password"
+                style={{
+                  fontSize: 16,
+                  fontWeight: "500",
+                  color: theme.colors.text,
+                  paddingLeft: 48,
+                  paddingRight: 12,
+                  height: 48,
+                  borderRadius: 12,
+                  backgroundColor: theme.colors.background,
+                  width: "100%",
+                }}
+                secureTextEntry={secureEntery}
+                onChangeText={setPassword}
+                value={password}
+              />
+
+              <SimpleLineIcons
+                name={"lock"}
+                size={24}
+                color={theme.colors.text}
+                style={{
+                  position: "absolute",
+                  left: 12,
+                  top: 12,
+                  opacity: 0.5,
+                }}
+              />
+              <TouchableOpacity
+                onPress={() => {
+                  setSecureEntery((prev) => !prev);
+                }}
+                style={{
+                  position: "relative",
+                  right: 33,
+                  top: 12,
+                  opacity: 0.5,
+                }}
+              >
+                <SimpleLineIcons
+                  name={"eye"}
+                  size={20}
+                  color={colors.black}
+                />
+              </TouchableOpacity>
+            </Animated.View>
+            <Animated.View
+              entering={FadeInDown.delay(600).duration(1000).springify()}
+            >
+              <PrimaryButton label="Log In" onPress={handleLogin} />
+            </Animated.View>
+          </View>
+        </View>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -136,11 +187,5 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     padding: 20,
-  },
-
-  headingText: {
-    fontSize: 42,
-    color: colors.primary,
-    fontWeight: "600",
   },
 });
