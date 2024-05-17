@@ -7,17 +7,14 @@ import {
   StyleSheet,
   FlatList,
 } from "react-native";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import MasonryList from "reanimated-masonry-list";
 import { BlurView } from "expo-blur";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import CustomBackdrop from "../components/CustomBackdrop";
-import FilterView from "../components/FilterView";
 import { TabsStackScreenProps } from "../navigators/TabsNavigator";
-import { TextInput } from "react-native-gesture-handler";
+import SearchBar from "../components/SearchBar";
 
 const CATEGORIES = [
   "Ring",
@@ -34,7 +31,7 @@ const CATEGORIES = [
 const AVATAR_URL =
   "https://scontent.fhan3-4.fna.fbcdn.net/v/t39.30808-6/397531770_1051616996022156_3370330046834720504_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeFMgvmDcTnhB5nozzUYqFv2AsodDh6apGcCyh0OHpqkZ5rSl-UPHnmjOQXyYyo-UWUvJ8_DdTvhH8b-LrF4mnde&_nc_ohc=E94nY0B2DjAQ7kNvgGnx0Ph&_nc_pt=1&_nc_ht=scontent.fhan3-4.fna&oh=00_AYBHugshxYM2-DEVYGfArotHK34E6HorRZe2dViseiriug&oe=664BE649";
 
-const MESONARY_LIST_DATA = [
+const PRODUCT_LIST_DATA = [
   {
     imageUrl:
       "https://wowjewelry.com.vn/wp-content/uploads/2022/10/O-Nhan-Kim-Cuong-Dai-Hoa-WOW3-scaled-1-scaled.jpg",
@@ -67,17 +64,30 @@ const MESONARY_LIST_DATA = [
   },
 ];
 
+const cardData = [
+  {
+    id: "123",
+    price: 13050,
+    imageUrl: "https://sinhdien.com.vn/public/thumbs/IMG_0022.jpg",
+  },
+  {
+    id: "456",
+    price: 12020,
+    imageUrl: "https://sinhdien.com.vn/public/thumbs/IMG_0022.jpg",
+  },
+  {
+    id: "789",
+    price: 17000,
+    imageUrl: "https://sinhdien.com.vn/public/thumbs/IMG_0022.jpg",
+  },
+];
+
 const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
   const { colors } = useTheme();
   const [categoryIndex, setCategoryIndex] = useState(0);
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-
-  const openFilterModal = useCallback(() => {
-    bottomSheetModalRef.current?.present();
-  }, []);
 
   return (
-    <ScrollView>
+    <ScrollView showsVerticalScrollIndicator={false}>
       <SafeAreaView style={{ paddingVertical: 24, gap: 24 }}>
         {/* Header Section */}
         <View
@@ -111,7 +121,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
               style={{ color: colors.text, opacity: 0.75 }}
               numberOfLines={1}
             >
-              Discover Jewelry that suit your favorite  
+              Discover Jewelry that suit your favorite
             </Text>
           </View>
           <TouchableOpacity
@@ -128,56 +138,8 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
             <Icons name="notifications" size={24} color={colors.text} />
           </TouchableOpacity>
         </View>
-
-        {/* Search Bar Section */}
-        <View style={{ flexDirection: "row", paddingHorizontal: 24, gap: 12 }}>
-          <View
-            style={{
-              flex: 1,
-              height: 52,
-              borderRadius: 52,
-              borderWidth: 1,
-              borderColor: colors.border,
-              alignItems: "center",
-              paddingHorizontal: 24,
-              flexDirection: "row",
-              gap: 12,
-            }}
-          >
-            <Icons
-              name="search"
-              size={24}
-              color={colors.text}
-              style={{ opacity: 0.5 }}
-            />
-            <TextInput
-              style={{
-                flex: 1,
-                fontSize: 16,
-                color: colors.text,
-                opacity: 0.5,
-              }}
-              placeholder="Search"
-            />
-            
-          </View>
-
-          <TouchableOpacity
-            onPress={openFilterModal}
-            style={{
-              width: 52,
-              aspectRatio: 1,
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 52,
-              backgroundColor: colors.primary,
-            }}
-          >
-            <Icons name="tune" size={24} color={colors.background} />
-          </TouchableOpacity>
-        </View>
-
-        {/* Grid Collection View */}
+        <SearchBar />
+        {/* Grid Jewelries View */}
         <View style={{ paddingHorizontal: 24 }}>
           {/* Title bar */}
           <View
@@ -197,37 +159,29 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
               <Text style={{ color: colors.primary }}>See All</Text>
             </TouchableOpacity>
           </View>
-          <View style={{ flexDirection: "row", height: 200, gap: 12 }}>
-            <Card
-              onPress={() => {
-                navigation.navigate("Details", {
-                  id: "123",
-                });
-              }}
-              price={130}
-              imageUrl="https://sinhdien.com.vn/public/thumbs/IMG_0022.jpg"
-            />
-            <View style={{ flex: 1, gap: 12 }}>
-              <Card
-                onPress={() => {
-                  navigation.navigate("Details", {
-                    id: "456",
-                  });
-                }}
-                price={120}
-                imageUrl="https://sinhdien.com.vn/public/thumbs/IMG_0022.jpg"
-              />
-              <Card
-                onPress={() => {
-                  navigation.navigate("Details", {
-                    id: "789",
-                  });
-                }}
-                price={170}
-                imageUrl="https://sinhdien.com.vn/public/thumbs/IMG_0022.jpg"
-              />
+          <ScrollView showsHorizontalScrollIndicator={false} horizontal style={{ height: 200 }}>
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 12 }}
+            >
+              {cardData.map((card, index) => (
+                <View
+                  key={card.id}
+                  style={
+  
+                       { width: 200, height: "100%" }
+                  }
+                >
+                  <Card
+                    onPress={() =>
+                      navigation.navigate("Details", { id: card.id })
+                    }
+                    price={card.price}
+                    imageUrl={card.imageUrl}
+                  />
+                </View>
+              ))}
             </View>
-          </View>
+          </ScrollView>
         </View>
 
         {/* Categories Section */}
@@ -270,7 +224,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
 
         {/* Mesonary */}
         <MasonryList
-          data={MESONARY_LIST_DATA}
+          data={PRODUCT_LIST_DATA}
           numColumns={2}
           contentContainerStyle={{ paddingHorizontal: 12 }}
           showsVerticalScrollIndicator={false}
@@ -375,22 +329,6 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
           onEndReachedThreshold={0.1}
         />
       </SafeAreaView>
-
-      <BottomSheetModal
-        snapPoints={["85%"]}
-        index={0}
-        ref={bottomSheetModalRef}
-        backdropComponent={(props) => <CustomBackdrop {...props} />}
-        backgroundStyle={{
-          borderRadius: 24,
-          backgroundColor: colors.card,
-        }}
-        handleIndicatorStyle={{
-          backgroundColor: colors.primary,
-        }}
-      >
-        <FilterView />
-      </BottomSheetModal>
     </ScrollView>
   );
 };
