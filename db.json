@@ -1,0 +1,12 @@
+{
+    "categories": [
+      { "id": 1, "name": "Ring" },
+      { "id": 2, "name": "Necklace" },
+      { "id": 3, "name": "Pendant" },
+      { "id": 4, "name": "Earring" },
+      { "id": 5, "name": "Shake" },
+      { "id": 6, "name": "Charm" },
+      { "id": 7, "name": "Neck Strap" },
+      { "id": 8, "name": "Stirrups" }
+    ]
+  }

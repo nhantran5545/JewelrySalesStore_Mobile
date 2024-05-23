@@ -7,7 +7,7 @@ import {
   StyleSheet,
   FlatList,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import Icons from "@expo/vector-icons/MaterialIcons";
@@ -20,6 +20,7 @@ import Animated, {
   FadeInRight,
   FadeInUp,
 } from "react-native-reanimated";
+import axios from "axios";
 
 const CATEGORIES = [
   "Ring",
@@ -87,9 +88,26 @@ const cardData = [
   },
 ];
 
+type Category = {
+  id: number;
+  name: string;
+};
+
 const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
   const { colors } = useTheme();
+  const [categories, setCategories] = useState<Category[]>([]);
   const [categoryIndex, setCategoryIndex] = useState(0);
+
+  useEffect(() => {
+    // Gọi API để lấy danh sách danh mục
+    axios.get<Category[]>('http://192.168.114.179:3000/categories')
+      .then(response => {
+        setCategories(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching categories:', error);
+      });
+  }, []);
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -191,7 +209,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
         </View>
 
         {/* Categories Section */}
-        <FlatList
+        {/* <FlatList
           data={CATEGORIES}
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -230,6 +248,48 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
               </Animated.View>
             );
           }}
+        /> */}
+
+        <FlatList
+          data={categories}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            gap: 12,
+          }}
+          renderItem={({ item, index }) => {
+            const isSelected = categoryIndex === index;
+            return (
+              <Animated.View
+                entering={FadeInUp.delay(600).duration(1000).springify()}
+              >
+                <TouchableOpacity
+                  onPress={() => setCategoryIndex(index)}
+                  style={{
+                    backgroundColor: isSelected ? colors.primary : colors.card,
+                    paddingHorizontal: 20,
+                    paddingVertical: 12,
+                    borderRadius: 100,
+                    borderWidth: isSelected ? 0 : 1,
+                    borderColor: colors.border,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: isSelected ? colors.background : colors.text,
+                      fontWeight: "600",
+                      fontSize: 14,
+                      opacity: isSelected ? 1 : 0.5,
+                    }}
+                  >
+                    {item.name}
+                  </Text>
+                </TouchableOpacity>
+              </Animated.View>
+            );
+          }}
+          keyExtractor={(item) => item.id.toString()}
         />
 
         {/* Mesonary */}
