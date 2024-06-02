@@ -9,14 +9,40 @@ import { useTheme } from "@react-navigation/native";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import { StatusBar } from "expo-status-bar";
 import BottomSheet from "@gorhom/bottom-sheet";
+import { addToCart } from "../utils/cartUtil";
 
-const SIZES = ["5", "5.5", "6", "7.5", "8", "8.5", "9", "9.5", "10", "10.5"];
+// Định nghĩa kiểu dữ liệu Product (nếu chưa được định nghĩa ở đây)
+type Product = {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  imageUrl: string;
+  productCode: String;
+  material: String;
+  color: String;
+  style: String;
+  weight: String;
+  length: String;
+};
 
-const BottomSheetDetail = () => {
+// Định nghĩa kiểu props cho BottomSheetDetail
+interface BottomSheetDetailProps {
+  product: Product;
+}
+
+// const SIZES = ["5", "5.5", "6", "7.5", "8", "8.5", "9", "9.5", "10", "10.5"];
+
+const BottomSheetDetail = ({ product }: BottomSheetDetailProps) => {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const [count, setCount] = useState(1);
-  const [size, setSize] = useState(SIZES[0]);
+  // const [size, setSize] = useState(SIZES[0]);
+
+  const handleAddToCart = async () => {
+    await addToCart(product);
+    alert('Sản Phẩm đã thêm vào giỏ hàng');
+  };
 
   return (
     <BottomSheet
@@ -35,9 +61,9 @@ const BottomSheetDetail = () => {
     >
       <View style={{ padding: 16, gap: 16, flex: 1 }}>
         <Text style={{ fontSize: 20, fontWeight: "600", color: colors.text }}>
-          Ổ NHẪN NỮ KIM CƯƠNG ĐÀI HOA
+          {product.name}
         </Text>
-        <View>
+        {/* <View>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Text style={{ color: colors.text, opacity: 0.5 }}>Size</Text>
           </View>
@@ -75,9 +101,31 @@ const BottomSheetDetail = () => {
               </TouchableOpacity>
             ))}
           </View>
-        </View>
+        </View> */}
 
         <View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "600",
+                color: colors.text,
+              }}
+            >
+              Mã sản phẩm:
+            </Text>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "400",
+                color: colors.text,
+                opacity: 0.75,
+                marginLeft: 8,
+              }}
+            >
+              {product.productCode}
+            </Text>
+          </View>
           <Text
             style={{
               fontSize: 16,
@@ -86,15 +134,121 @@ const BottomSheetDetail = () => {
               color: colors.text,
             }}
           >
-            Description
+            Mô tả
           </Text>
-          <Text style={{ color: colors.text, opacity: 0.75 }} numberOfLines={7}>
-            Diamonds are inherently a piece of jewelry that brings pride and
-            endless fashion inspiration. Owning your own diamond jewelry is what
-            everyone desires. The ring is crafted from 14K gold and accented
-            with diamonds with 57 precisely cut facets, creating jewelry full of
-            luxury and class.
+          <Text style={{ color: colors.text, opacity: 0.75, marginBottom: 6 }} numberOfLines={7}>
+            {product.description}
           </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "600",
+                color: colors.text,
+              }}
+            >
+              Chất liệu:
+            </Text>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "400",
+                color: colors.text,
+                opacity: 0.75,
+                marginLeft: 8,
+              }}
+            >
+              {product.material}
+            </Text>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "600",
+                color: colors.text,
+              }}
+            >
+              Màu sắc:
+            </Text>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "400",
+                color: colors.text,
+                opacity: 0.75,
+                marginLeft: 8,
+              }}
+            >
+              {product.color}
+            </Text>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "600",
+                color: colors.text,
+              }}
+            >
+              Kiểu dáng:
+            </Text>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "400",
+                color: colors.text,
+                opacity: 0.75,
+                marginLeft: 8,
+              }}
+            >
+              {product.style}
+            </Text>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "600",
+                color: colors.text,
+              }}
+            >
+              Trọng Lượng:
+            </Text>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "400",
+                color: colors.text,
+                opacity: 0.75,
+                marginLeft: 8,
+              }}
+            >
+              {product.weight}
+            </Text>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "600",
+                color: colors.text,
+              }}
+            >
+              Chiều dài:
+            </Text>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "400",
+                color: colors.text,
+                opacity: 0.75,
+                marginLeft: 8,
+              }}
+            >
+              {product.length}
+            </Text>
+          </View>
         </View>
 
         <View style={{ flex: 1 }} />
@@ -103,16 +257,17 @@ const BottomSheetDetail = () => {
             <Text
               style={{ color: colors.text, opacity: 0.75, marginBottom: 4 }}
             >
-              Total
+              Giá
             </Text>
             <Text
-              style={{ color: colors.text, fontSize: 18, fontWeight: "600" }}
+              style={{ color: '#A2765B', fontSize: 18, fontWeight: "600" }}
             >
-              ${(25000).toLocaleString()}
+              {product.price.toLocaleString()} VND
             </Text>
           </View>
 
           <TouchableOpacity
+            onPress={handleAddToCart}
             style={{
               backgroundColor: colors.primary,
               height: 64,
@@ -134,7 +289,6 @@ const BottomSheetDetail = () => {
             >
               Add to cart
             </Text>
-
             <View
               style={{
                 backgroundColor: colors.card,

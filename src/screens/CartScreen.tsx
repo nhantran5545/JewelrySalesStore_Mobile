@@ -1,69 +1,107 @@
-import React from 'react';
-import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-import Animated from 'react-native-reanimated';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { useTheme, useFocusEffect, useNavigation } from "@react-navigation/native";
+import { getCart, removeFromCart } from '../utils/cartUtil';
+import { Feather } from '@expo/vector-icons';
+import { RootStackScreenProps } from '../navigators/RootNavigator';
+import { Fontisto } from '@expo/vector-icons';
 
-interface Product {
+type Product = {
   id: string;
   name: string;
+  description: string;
   price: number;
   imageUrl: string;
-  quantity: number;
-}
-
-const cartData: Product[] = [
-  {
-    id: '1',
-    name: 'Product 1',
-    price: 13050,
-    imageUrl: 'https://sinhdien.com.vn/public/thumbs/IMG_0022.jpg',
-    quantity: 1,
-  },
-  {
-    id: '2',
-    name: 'Product 2',
-    price: 12020,
-    imageUrl: 'https://sinhdien.com.vn/public/thumbs/IMG_0022.jpg',
-    quantity: 2,
-  },
-  {
-    id: '3',
-    name: 'Product 3',
-    price: 17000,
-    imageUrl: 'https://sinhdien.com.vn/public/thumbs/IMG_0022.jpg',
-    quantity: 1,
-  },
-];
+  productCode: string;
+  material: string;
+  color: string;
+  style: string;
+  weight: string;
+  length: string;
+};
 
 const CartScreen: React.FC = () => {
+  const [cartItems, setCartItems] = useState<Product[]>([]);
+  const { colors } = useTheme();
+  const navigation = useNavigation<RootStackScreenProps<'Cart'>['navigation']>();
+
+  useFocusEffect( // Using useFocusEffect to fetch cart items whenever the screen is focused
+    useCallback(() => {
+      const fetchCartItems = async () => {
+        const items = await getCart();
+        setCartItems(items);
+      };
+
+      fetchCartItems();
+    }, [])
+  );
+
   const renderItem = ({ item }: { item: Product }) => (
     <View style={styles.card}>
       <Image source={{ uri: item.imageUrl }} style={styles.image} />
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.price}>${item.price}</Text>
-        <Text style={styles.quantity}>Quantity: {item.quantity}</Text>
+        <Text style={styles.price}>{item.price.toLocaleString()} VND</Text>
+        <Text style={styles.quantity}>Số Lượng: 1</Text>
       </View>
+      <TouchableOpacity onPress={() => handleRemoveFromCart(item.id)} style={styles.removeButton}>
+        <Text style={styles.removeButtonText}>
+          <Feather name="trash-2" size={24} color="white" />
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 
-  const getTotalPrice = () => {
-    return cartData.reduce((total, item) => total + item.price * item.quantity, 0);
+  const handleRemoveFromCart = (productId: string) => {
+    Alert.alert(
+      'Xóa khỏi giỏ hàng',
+      'Bạn có muốn xóa sản phẩm này khỏi giỏ hàng',
+      [
+        {
+          text: 'Hủy',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: 'Xóa',
+          onPress: async () => {
+            await removeFromCart(productId); // Call removeFromCart function
+            const updatedCartItems = cartItems.filter(item => item.id !== productId);
+            setCartItems(updatedCartItems);
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
+  const getTotalPrice = () => {
+    return cartItems.reduce((total, item) => total + item.price, 0).toLocaleString();
+  };
+  
   return (
     <View style={styles.container}>
-      <FlatList
-        data={cartData}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.listContainer}
-      />
-      <View style={styles.footer}>
-        <Text style={styles.totalPrice}>Total: ${getTotalPrice()}</Text>
-        <TouchableOpacity style={styles.checkoutButton}>
-          <Text style={styles.checkoutButtonText}>Checkout</Text>
-        </TouchableOpacity>
-      </View>
+      {cartItems.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Fontisto name="shopping-basket" size={64} color="#888888" />
+          <Text style={styles.emptyText}>Không có sản phẩm nào trong giỏ hàng</Text>
+        </View>
+      ) : (
+        <>
+          <FlatList
+            data={cartItems}
+            renderItem={renderItem}
+            keyExtractor={item => item.id}
+            contentContainerStyle={styles.listContainer}
+          />
+          <View style={styles.footer}>
+            <Text style={styles.totalPrice}>Tổng Giá: {getTotalPrice()} VND</Text>
+            <TouchableOpacity style={styles.checkoutButton} onPress={() => navigation.navigate("CustomerInfo1")}>
+              <Text style={styles.checkoutButtonText}>Nhập Thông Tin Khách Hàng</Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
     </View>
   );
 };
@@ -105,6 +143,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#888888',
   },
+  removeButton: {
+    position: 'absolute',
+    right: 2,
+    marginTop: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FF6347',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 4,
+  },
+  removeButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+  },
   quantity: {
     fontSize: 14,
     color: '#888888',
@@ -130,6 +183,16 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    marginTop: 10,
+    fontSize: 18,
+    color: '#888888',
   },
 });
 

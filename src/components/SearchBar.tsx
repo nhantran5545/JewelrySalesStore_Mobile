@@ -41,7 +41,7 @@ const SearchBar = () => {
               color: colors.text,
               opacity: 0.5,
             }}
-            placeholder="Search"
+            placeholder="Tìm kiếm sản phẩm"
           />
         </View>
 

@@ -12,11 +12,14 @@ import { TransitionPresets } from "@react-navigation/stack";
 import { RootStackScreenProps } from "./RootNavigator";
 import CustomBottomTabs from "../components/CustomBottomTabs";
 import CartScreen from "../screens/CartScreen";
+import { FontAwesome5 } from '@expo/vector-icons';
+import BuyBackScreen from "../screens/BuyBackScreen";
 
 export type TabsStackParamList = {
   Home: undefined;
   Cart: undefined;
   Profile: undefined;
+  BuyBack: undefined;
 };
 const TabsStack = createBottomTabNavigator<TabsStackParamList>();
 
@@ -49,7 +52,7 @@ const TabsNavigator = () => {
         name="Cart"
         component={CartScreen}
         options={{
-            ...TransitionPresets.SlideFromRightIOS,
+          ...TransitionPresets.SlideFromRightIOS,
           headerShown: true,
           headerTitleStyle: {
             fontSize: 22,
@@ -62,6 +65,15 @@ const TabsNavigator = () => {
           // ),
           tabBarIcon(props) {
             return <Icons name="shopping-cart" {...props} />;
+          },
+        }}
+      />
+      <TabsStack.Screen
+        name="BuyBack"
+        component={BuyBackScreen}
+        options={{
+          tabBarIcon(props) {
+            return <Icons name="store" {...props} />;
           },
         }}
       />

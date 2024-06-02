@@ -1,12 +1,266 @@
 {
-    "categories": [
-      { "id": 1, "name": "Ring" },
-      { "id": 2, "name": "Necklace" },
-      { "id": 3, "name": "Pendant" },
-      { "id": 4, "name": "Earring" },
-      { "id": 5, "name": "Shake" },
-      { "id": 6, "name": "Charm" },
-      { "id": 7, "name": "Neck Strap" },
-      { "id": 8, "name": "Stirrups" }
-    ]
-  }
+  "categories": [
+    {
+      "id": "1",
+      "name": "Nhẫn"
+    },
+    {
+      "id": "2",
+      "name": "Dây chuyền"
+    },
+    {
+      "id": "3",
+      "name": "Mặt dây chuyền"
+    },
+    {
+      "id": "4",
+      "name": "Bông tai"
+    },
+    {
+      "id": "5",
+      "name": "Lắc tay"
+    },
+    {
+      "id": "6",
+      "name": "Charm"
+    },
+    {
+      "id": "7",
+      "name": "Dây đeo cổ"
+    },
+    {
+      "id": "8",
+      "name": "Chân vòng"
+    }
+  ],
+  "products": [
+    {
+      "id": "1",
+      "name": "Nhẫn Kim Cương",
+      "categoryId": 1,
+      "price": 1500000,
+      "imageUrl": "https://locphuc.com.vn/Content/Images/022023/DSR0918BRW.WG01A/nhan-kim-cuong-DSR0918BRW-WG01A-g1.jpg",
+      "description": "Nhẫn kim cương sang trọng và quý phái.",
+      "productCode": "NKC001",
+      "material": "Vàng trắng",
+      "color": "Trắng",
+      "style": "Cổ điển",
+      "weight": "5g",
+      "length": "N/A"
+    },
+    {
+      "id": "2",
+      "name": "Dây chuyền vàng",
+      "categoryId": 2,
+      "price": 200000,
+      "imageUrl": "https://apj.vn/wp-content/uploads/2019/10/DCK1701-900x900.jpg",
+      "description": "Dây chuyền vàng 24k với thiết kế tinh tế.",
+      "productCode": "DCV001",
+      "material": "Vàng 24K",
+      "color": "Vàng",
+      "style": "Hiện đại",
+      "weight": "10g",
+      "length": "45cm"
+    },
+    {
+      "id": "3",
+      "name": "Mặt dây chuyền bạc",
+      "categoryId": 3,
+      "price": 8000000,
+      "imageUrl": "https://lili.vn/wp-content/uploads/2023/10/Mat-day-chuyen-bac-nam-hinh-trang-sao-Cason-LILI_080074_5.jpg",
+      "description": "Mặt dây chuyền bạc với họa tiết hoa văn.",
+      "productCode": "MDCB001",
+      "material": "Bạc",
+      "color": "Bạc",
+      "style": "Hoa văn",
+      "weight": "15g",
+      "length": "5cm"
+    },
+    {
+      "id": "4",
+      "name": "Bông tai ngọc trai",
+      "categoryId": 4,
+      "price": 120000,
+      "imageUrl": "https://product.hstatic.net/200000351153/product/e6025_-_web_7e86832d90044d31ae8f9cd63f6b254f_master.jpg",
+      "description": "Bông tai ngọc trai tự nhiên, quý phái.",
+      "productCode": "BTNT001",
+      "material": "Ngọc trai",
+      "color": "Trắng",
+      "style": "Cổ điển",
+      "weight": "3g",
+      "length": "N/A"
+    },
+    {
+      "id": "5",
+      "name": "Lắc tay bạc",
+      "categoryId": 5,
+      "price": 500000,
+      "imageUrl": "https://anh.quatructuyen.com/media/catalog/product/cache/1/image/480x480/9df78eab33525d08d6e5fb8d27136e95/l/a/lac_tay_bac_1.jpg",
+      "description": "Lắc tay bạc với thiết kế đơn giản và thanh lịch.",
+      "productCode": "LTB001",
+      "material": "Bạc",
+      "color": "Bạc",
+      "style": "Đơn giản",
+      "weight": "7g",
+      "length": "20cm"
+    },
+    {
+      "id": "6",
+      "name": "Charm bạc",
+      "categoryId": 6,
+      "price": 300000,
+      "imageUrl": "https://images.squarespace-cdn.com/content/v1/5fc46ed50b6b03258f4c2bb4/1689092707701-3IUROMCNEVHQ6O7JRSXP/1.jpg",
+      "description": "Charm bạc phù hợp với mọi loại vòng tay.",
+      "productCode": "CB001",
+      "material": "Bạc",
+      "color": "Bạc",
+      "style": "Hiện đại",
+      "weight": "2g",
+      "length": "N/A"
+    },
+    {
+      "id": "7",
+      "name": "Dây đeo cổ da",
+      "categoryId": 7,
+      "price": 400000,
+      "imageUrl": "https://bizweb.dktcdn.net/100/337/219/products/day-nam-da-that-boc-dau-rong-bac-925-5.jpg?v=1672221228787",
+      "description": "Dây đeo cổ làm từ da cao cấp.",
+      "productCode": "DDCD001",
+      "material": "Da",
+      "color": "Nâu",
+      "style": "Cổ điển",
+      "weight": "8g",
+      "length": "50cm"
+    },
+    {
+      "id": "8",
+      "name": "Chân vòng bạc",
+      "categoryId": 8,
+      "price": 600000,
+      "imageUrl": "https://bizweb.dktcdn.net/thumb/large/100/302/551/products/compressed-cropped-resized-bi-2110-2-067-20684-1.jpg?v=1641927170837",
+      "description": "Chân vòng bạc, thiết kế độc đáo.",
+      "productCode": "CVB001",
+      "material": "Bạc",
+      "color": "Bạc",
+      "style": "Độc đáo",
+      "weight": "4g",
+      "length": "18cm"
+    }
+  ],
+  "customers": [
+    {
+      "id": "1",
+      "name": "Nguyễn Văn A",
+      "phone": "0123456789",
+      "address": "123 Đường A, Quận 1, TP. Hồ Chí Minh"
+    },
+    {
+      "id": "2",
+      "name": "Trần Thị B",
+      "phone": "0987654321",
+      "address": "456 Đường B, Quận 2, TP. Hồ Chí Minh"
+    },
+    {
+      "id": "3",
+      "name": "Lê Văn C",
+      "phone": "0112233445",
+      "address": "789 Đường C, Quận 3, TP. Hồ Chí Minh"
+    },
+    {
+      "id": "4",
+      "name": "Phạm Thị D",
+      "phone": "0556677889",
+      "address": "101 Đường D, Quận 4, TP. Hồ Chí Minh"
+    },
+    {
+      "id": "5",
+      "name": "Hoàng Văn E",
+      "phone": "0778899001",
+      "address": "202 Đường E, Quận 5, TP. Hồ Chí Minh"
+    },
+    {
+      "id": "6",
+      "name": "Vũ Thị F",
+      "phone": "0334455667",
+      "address": "303 Đường F, Quận 6, TP. Hồ Chí Minh"
+    },
+    {
+      "id": "7",
+      "name": "Đỗ Văn G",
+      "phone": "0998877665",
+      "address": "404 Đường G, Quận 7, TP. Hồ Chí Minh"
+    },
+    {
+      "id": "8",
+      "name": "Ngô Thị H",
+      "phone": "0119988776",
+      "address": "505 Đường H, Quận 8, TP. Hồ Chí Minh"
+    },
+    {
+      "id": "9043",
+      "name": "a",
+      "phone": "123",
+      "address": "sada"
+    }
+  ],
+  "invoices": [
+    {
+      "id": "3f01",
+      "customer": {
+        "id": "3",
+        "name": "Lê Văn C",
+        "phone": "0112233445",
+        "address": "789 Đường C, Quận 3, TP. Hồ Chí Minh"
+      },
+      "items": [
+        {
+          "id": "1",
+          "name": "Nhẫn Kim Cương",
+          "categoryId": 1,
+          "price": 1500000,
+          "imageUrl": "https://locphuc.com.vn/Content/Images/022023/DSR0918BRW.WG01A/nhan-kim-cuong-DSR0918BRW-WG01A-g1.jpg",
+          "description": "Nhẫn kim cương sang trọng và quý phái.",
+          "productCode": "NKC001",
+          "material": "Vàng trắng",
+          "color": "Trắng",
+          "style": "Cổ điển",
+          "weight": "5g",
+          "length": "N/A"
+        }
+      ],
+      "totalPrice": 1500000,
+      "discount": 75000,
+      "finalPrice": 1425000,
+      "date": "2024-06-02T14:22:17.410Z"
+    },
+    {
+      "id": "ad47",
+      "customer": {
+        "id": "1",
+        "name": "Nguyễn Văn A",
+        "phone": "0123456789",
+        "address": "123 Đường A, Quận 1, TP. Hồ Chí Minh"
+      },
+      "items": [
+        {
+          "id": "2",
+          "name": "Dây chuyền vàng",
+          "categoryId": 2,
+          "price": 200000,
+          "imageUrl": "https://apj.vn/wp-content/uploads/2019/10/DCK1701-900x900.jpg",
+          "description": "Dây chuyền vàng 24k với thiết kế tinh tế.",
+          "productCode": "DCV001",
+          "material": "Vàng 24K",
+          "color": "Vàng",
+          "style": "Hiện đại",
+          "weight": "10g",
+          "length": "45cm"
+        }
+      ],
+      "totalPrice": 200000,
+      "discount": 10000,
+      "finalPrice": 190000,
+      "date": "2024-06-02T14:24:30.172Z"
+    }
+  ]
+}

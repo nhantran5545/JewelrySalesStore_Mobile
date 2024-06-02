@@ -21,6 +21,8 @@ import Animated, {
   FadeInUp,
 } from "react-native-reanimated";
 import axios from "axios";
+import { addToCart } from "../utils/cartUtil";
+
 
 const CATEGORIES = [
   "Ring",
@@ -75,16 +77,19 @@ const cardData = [
     id: "123",
     price: 13050,
     imageUrl: "https://sinhdien.com.vn/public/thumbs/IMG_0022.jpg",
+    name: "Nhẫn 1"
   },
   {
     id: "456",
     price: 12020,
     imageUrl: "https://sinhdien.com.vn/public/thumbs/IMG_0022.jpg",
+    name: "Nhẫn 2"
   },
   {
     id: "789",
     price: 17000,
     imageUrl: "https://sinhdien.com.vn/public/thumbs/IMG_0022.jpg",
+    name: "Nhẫn 3"
   },
 ];
 
@@ -93,21 +98,51 @@ type Category = {
   name: string;
 };
 
+type Product = {
+  id: number;
+  name: string;
+  price: number;
+  imageUrl: string;
+  categoryId: number;
+};
+
 const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
   const { colors } = useTheme();
   const [categories, setCategories] = useState<Category[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [categoryIndex, setCategoryIndex] = useState(0);
+
+  const handleAddToCart = async (product: Product) => {
+    try {
+      await addToCart(product); // Gọi API để thêm sản phẩm vào giỏ hàng
+      alert('Sản Phẩm đã thêm vào giỏ hàng');
+    } catch (error) {
+      console.error('Failed to add product to cart:', error);
+      alert('Lỗi khi thêm sản phẩm vào giỏ hàng');
+    }
+  };
 
   useEffect(() => {
     // Gọi API để lấy danh sách danh mục
-    axios.get<Category[]>('http://192.168.114.179:3000/categories')
+    axios.get<Category[]>('http://10.0.128.112:3000/categories')
       .then(response => {
         setCategories(response.data);
       })
       .catch(error => {
         console.error('Error fetching categories:', error);
       });
+
+    // Gọi API để lấy danh sách sản phẩm
+    axios.get<Product[]>('http://10.0.128.112:3000/products')
+      .then(response => {
+        setProducts(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching products:', error);
+      });
+
   }, []);
+  
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -145,7 +180,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
               style={{ color: colors.text, opacity: 0.75 }}
               numberOfLines={1}
             >
-              Discover Jewelry that suit your favorite
+              Khám phá trang các trang sức phù hợp
             </Text>
           </View>
           <TouchableOpacity
@@ -177,7 +212,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
             <Text
               style={{ fontSize: 20, fontWeight: "700", color: colors.text }}
             >
-              New Jewelries
+              Đồ trang sức mới
             </Text>
             <TouchableOpacity>
               <Text style={{ color: colors.primary }}>See All</Text>
@@ -201,6 +236,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
                     }
                     price={card.price}
                     imageUrl={card.imageUrl}
+                    name={card.name}
                   />
                 </View>
               ))}
@@ -294,7 +330,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
 
         {/* Mesonary */}
         <MasonryList
-          data={PRODUCT_LIST_DATA}
+          data={products}
           numColumns={2}
           contentContainerStyle={{ paddingHorizontal: 12 }}
           showsVerticalScrollIndicator={false}
@@ -303,6 +339,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
               entering={FadeInDown.delay(600).duration(1000).springify()}
               style={{ padding: 6 }}
             >
+              <TouchableOpacity onPress={() => navigation.navigate("Details", { id: item.id }) }>
               <View
                 style={{
                   aspectRatio: i === 0 ? 1 : 2 / 3,
@@ -332,7 +369,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
                         flex: 1,
                         fontSize: 16,
                         fontWeight: "600",
-                        color: "#fff",
+                        color: "#000000",
                         textShadowColor: "rgba(0,0,0,0.2)",
                         textShadowOffset: {
                           height: 1,
@@ -341,7 +378,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
                         textShadowRadius: 4,
                       }}
                     >
-                      {item.title}
+                      {item.name}
                     </Text>
                   </View>
                   <View style={{ flex: 1 }} />
@@ -361,14 +398,15 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
                         flex: 1,
                         fontSize: 16,
                         fontWeight: "600",
-                        color: "#fff",
-                        marginLeft: 8,
+                        color: "#000000",
+                        marginLeft: 0,
                       }}
-                      numberOfLines={1}
+                      numberOfLines={2}
                     >
-                      ${item.price}
+                      {item.price.toLocaleString()} VND
                     </Text>
                     <TouchableOpacity
+                    onPress={()=> handleAddToCart(item)}
                       style={{
                         paddingHorizontal: 12,
                         paddingVertical: 8,
@@ -381,6 +419,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
                   </BlurView>
                 </View>
               </View>
+              </TouchableOpacity>
             </Animated.View>
           )}
           onEndReachedThreshold={0.1}
@@ -395,10 +434,12 @@ export default HomeScreen;
 const Card = ({
   price,
   imageUrl,
+  name,
   onPress,
 }: {
   price: number;
   imageUrl: string;
+  name: string;
   onPress?: () => void;
 }) => {
   return (
@@ -436,7 +477,10 @@ const Card = ({
         }}
       >
         <Text style={{ fontSize: 14, fontWeight: "600", color: "#fff" }}>
-          ${price}
+          {name}
+        </Text>
+        <Text style={{ fontSize: 14, fontWeight: "600", color: "#fff", marginTop: 120 }}>
+          {price} VND
         </Text>
       </View>
     </TouchableOpacity>

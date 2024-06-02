@@ -86,6 +86,8 @@ const TabItem = ({
               ? "shopping-cart"
               : routeName === "Payment"
               ? "account-balance-wallet"
+              : routeName === "BuyBack"
+              ? "store"
               : "person"
           }
           size={24}
