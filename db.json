@@ -261,6 +261,107 @@
       "discount": 10000,
       "finalPrice": 190000,
       "date": "2024-06-02T14:24:30.172Z"
+    },
+    {
+      "id": "1819",
+      "customer": {
+        "id": "9043",
+        "name": "a",
+        "phone": "123",
+        "address": "sada"
+      },
+      "items": [
+        {
+          "id": "1",
+          "name": "Nhẫn Kim Cương",
+          "categoryId": 1,
+          "price": 1500000,
+          "imageUrl": "https://locphuc.com.vn/Content/Images/022023/DSR0918BRW.WG01A/nhan-kim-cuong-DSR0918BRW-WG01A-g1.jpg",
+          "description": "Nhẫn kim cương sang trọng và quý phái.",
+          "productCode": "NKC001",
+          "material": "Vàng trắng",
+          "color": "Trắng",
+          "style": "Cổ điển",
+          "weight": "5g",
+          "length": "N/A"
+        }
+      ],
+      "totalPrice": 1500000,
+      "discount": 75000,
+      "finalPrice": 1425000,
+      "date": "2024-06-04T13:17:53.877Z"
+    },
+    {
+      "id": "86f5",
+      "customer": {
+        "id": "2",
+        "name": "Trần Thị B",
+        "phone": "0987654321",
+        "address": "456 Đường B, Quận 2, TP. Hồ Chí Minh"
+      },
+      "items": [
+        {
+          "id": "1",
+          "name": "Nhẫn Kim Cương",
+          "categoryId": 1,
+          "price": 1500000,
+          "imageUrl": "https://locphuc.com.vn/Content/Images/022023/DSR0918BRW.WG01A/nhan-kim-cuong-DSR0918BRW-WG01A-g1.jpg",
+          "description": "Nhẫn kim cương sang trọng và quý phái.",
+          "productCode": "NKC001",
+          "material": "Vàng trắng",
+          "color": "Trắng",
+          "style": "Cổ điển",
+          "weight": "5g",
+          "length": "N/A"
+        }
+      ],
+      "totalPrice": 1500000,
+      "discount": 75000,
+      "finalPrice": 1425000,
+      "date": "2024-06-04T13:27:33.515Z"
+    },
+    {
+      "id": "99a0",
+      "customer": {
+        "id": "1",
+        "name": "Nguyễn Văn A",
+        "phone": "0123456789",
+        "address": "123 Đường A, Quận 1, TP. Hồ Chí Minh"
+      },
+      "items": [
+        {
+          "id": "1",
+          "name": "Nhẫn Kim Cương",
+          "categoryId": 1,
+          "price": 1500000,
+          "imageUrl": "https://locphuc.com.vn/Content/Images/022023/DSR0918BRW.WG01A/nhan-kim-cuong-DSR0918BRW-WG01A-g1.jpg",
+          "description": "Nhẫn kim cương sang trọng và quý phái.",
+          "productCode": "NKC001",
+          "material": "Vàng trắng",
+          "color": "Trắng",
+          "style": "Cổ điển",
+          "weight": "5g",
+          "length": "N/A"
+        },
+        {
+          "id": "2",
+          "name": "Dây chuyền vàng",
+          "categoryId": 2,
+          "price": 200000,
+          "imageUrl": "https://apj.vn/wp-content/uploads/2019/10/DCK1701-900x900.jpg",
+          "description": "Dây chuyền vàng 24k với thiết kế tinh tế.",
+          "productCode": "DCV001",
+          "material": "Vàng 24K",
+          "color": "Vàng",
+          "style": "Hiện đại",
+          "weight": "10g",
+          "length": "45cm"
+        }
+      ],
+      "totalPrice": 1700000,
+      "discount": 85000,
+      "finalPrice": 1615000,
+      "date": "2024-06-05T00:25:31.122Z"
     }
   ]
 }

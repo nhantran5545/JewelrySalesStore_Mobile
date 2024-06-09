@@ -31,3 +31,11 @@ export const removeFromCart = async (productId) => {
     console.error('Failed to remove item from cart:', error);
   }
 };
+
+export const clearCart = async () => {
+  try {
+    await AsyncStorage.removeItem('cart');
+  } catch (error) {
+    console.error('Failed to clear the cart from storage', error);
+  }
+};

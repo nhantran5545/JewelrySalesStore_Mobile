@@ -9,20 +9,24 @@ import { useTheme } from "@react-navigation/native";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import { StatusBar } from "expo-status-bar";
 import BottomSheetDetail from "../components/BottomSheetDetail";
+import { fetchProductById } from "../api/api";
 
 // Định nghĩa kiểu dữ liệu Product
 type Product = {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  imageUrl: string;
-  productCode: String;
-  material: String;
-  color: String;
-  style: String;
-  weight: String;
-  length: String;
+  productId: string;
+  productName: string;
+  size: string;
+  img: string;
+  counterId: number;
+  counterName: string;
+  categoryId: number;
+  categoryName: string;
+  materialCost: number;
+  diamondCost: number;
+  productionCost: number;
+  productPrice: number;
+  quantity: number;
+  status: string;
 };
 
 const DetailsScreen = ({
@@ -36,18 +40,16 @@ const DetailsScreen = ({
   const [product, setProduct] = useState<Product | null>(null);
 
   useEffect(() => {
-    // Giả sử bạn có một hàm fetchProductById để gọi API
-    const fetchProductById = async (productId: string) => {
+    const getProductDetails = async () => {
       try {
-        const response = await fetch(`http://10.0.128.112:3000/products/${productId}`);
-        const data = await response.json();
-        setProduct(data);
+        const productData = await fetchProductById(id);
+        setProduct(productData);
       } catch (error) {
         console.error("Failed to fetch product details:", error);
       }
     };
 
-    fetchProductById(id);
+    getProductDetails();
   }, [id]);
 
   if (!product) {
@@ -62,7 +64,7 @@ const DetailsScreen = ({
     <View style={{ flex: 1 }}>
       <Image
         source={{
-          uri: product.imageUrl
+          uri: product.img
         }}
         style={{ flex: 1 }}
       />

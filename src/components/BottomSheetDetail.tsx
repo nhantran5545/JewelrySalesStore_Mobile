@@ -13,17 +13,20 @@ import { addToCart } from "../utils/cartUtil";
 
 // Định nghĩa kiểu dữ liệu Product (nếu chưa được định nghĩa ở đây)
 type Product = {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  imageUrl: string;
-  productCode: String;
-  material: String;
-  color: String;
-  style: String;
-  weight: String;
-  length: String;
+  productId: string;
+  productName: string;
+  size: string;
+  img: string;
+  counterId: number;
+  counterName: string;
+  categoryId: number;
+  categoryName: string;
+  materialCost: number;
+  diamondCost: number;
+  productionCost: number;
+  productPrice: number;
+  quantity: number;
+  status: string;
 };
 
 // Định nghĩa kiểu props cho BottomSheetDetail
@@ -61,7 +64,7 @@ const BottomSheetDetail = ({ product }: BottomSheetDetailProps) => {
     >
       <View style={{ padding: 16, gap: 16, flex: 1 }}>
         <Text style={{ fontSize: 20, fontWeight: "600", color: colors.text }}>
-          {product.name}
+          {product.productName}
         </Text>
         {/* <View>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -123,7 +126,7 @@ const BottomSheetDetail = ({ product }: BottomSheetDetailProps) => {
                 marginLeft: 8,
               }}
             >
-              {product.productCode}
+              {product.productId}
             </Text>
           </View>
           <Text
@@ -134,10 +137,10 @@ const BottomSheetDetail = ({ product }: BottomSheetDetailProps) => {
               color: colors.text,
             }}
           >
-            Mô tả
+            Kích thước:
           </Text>
-          <Text style={{ color: colors.text, opacity: 0.75, marginBottom: 6 }} numberOfLines={7}>
-            {product.description}
+          <Text style={{ color: colors.text, opacity: 0.75, marginBottom: 6, fontSize: 20 }} numberOfLines={7}>
+            {product.size}
           </Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
             <Text
@@ -147,7 +150,7 @@ const BottomSheetDetail = ({ product }: BottomSheetDetailProps) => {
                 color: colors.text,
               }}
             >
-              Chất liệu:
+              Loại:
             </Text>
             <Text
               style={{
@@ -158,7 +161,7 @@ const BottomSheetDetail = ({ product }: BottomSheetDetailProps) => {
                 marginLeft: 8,
               }}
             >
-              {product.material}
+              {product.categoryName}
             </Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
@@ -169,7 +172,7 @@ const BottomSheetDetail = ({ product }: BottomSheetDetailProps) => {
                 color: colors.text,
               }}
             >
-              Màu sắc:
+              Giá sản xuất:
             </Text>
             <Text
               style={{
@@ -180,7 +183,7 @@ const BottomSheetDetail = ({ product }: BottomSheetDetailProps) => {
                 marginLeft: 8,
               }}
             >
-              {product.color}
+              {product.productionCost.toLocaleString()} VND
             </Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
@@ -191,7 +194,7 @@ const BottomSheetDetail = ({ product }: BottomSheetDetailProps) => {
                 color: colors.text,
               }}
             >
-              Kiểu dáng:
+              Giá vật liệu:
             </Text>
             <Text
               style={{
@@ -202,7 +205,7 @@ const BottomSheetDetail = ({ product }: BottomSheetDetailProps) => {
                 marginLeft: 8,
               }}
             >
-              {product.style}
+              {product.materialCost.toLocaleString()} VND
             </Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
@@ -213,7 +216,7 @@ const BottomSheetDetail = ({ product }: BottomSheetDetailProps) => {
                 color: colors.text,
               }}
             >
-              Trọng Lượng:
+              Giá kim cương :
             </Text>
             <Text
               style={{
@@ -224,7 +227,7 @@ const BottomSheetDetail = ({ product }: BottomSheetDetailProps) => {
                 marginLeft: 8,
               }}
             >
-              {product.weight}
+              {product.diamondCost.toLocaleString()} VND
             </Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
@@ -235,7 +238,7 @@ const BottomSheetDetail = ({ product }: BottomSheetDetailProps) => {
                 color: colors.text,
               }}
             >
-              Chiều dài:
+              Trạng thái:
             </Text>
             <Text
               style={{
@@ -246,7 +249,7 @@ const BottomSheetDetail = ({ product }: BottomSheetDetailProps) => {
                 marginLeft: 8,
               }}
             >
-              {product.length}
+              {product.status}
             </Text>
           </View>
         </View>
@@ -262,7 +265,7 @@ const BottomSheetDetail = ({ product }: BottomSheetDetailProps) => {
             <Text
               style={{ color: '#A2765B', fontSize: 18, fontWeight: "600" }}
             >
-              {product.price.toLocaleString()} VND
+              {product.productPrice.toLocaleString()} VND
             </Text>
           </View>
 

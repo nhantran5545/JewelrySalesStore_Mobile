@@ -18,6 +18,7 @@ type Product = {
   style: string;
   weight: string;
   length: string;
+  quantity: number;
 };
 
 const CartScreen: React.FC = () => {
@@ -42,7 +43,7 @@ const CartScreen: React.FC = () => {
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{item.name}</Text>
         <Text style={styles.price}>{item.price.toLocaleString()} VND</Text>
-        <Text style={styles.quantity}>Số Lượng: 1</Text>
+        <Text style={styles.quantity}>Số Lượng: {item.quantity}</Text>
       </View>
       <TouchableOpacity onPress={() => handleRemoveFromCart(item.id)} style={styles.removeButton}>
         <Text style={styles.removeButtonText}>

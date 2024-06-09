@@ -1,10 +1,21 @@
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import React, { useCallback, useRef } from "react";
+import { TextInput, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
 import { useTheme } from "@react-navigation/native";
 import Icons from "@expo/vector-icons/MaterialIcons";
 
-const SearchCustomer = () => {
+type SearchCustomerProps = {
+  onSearch: (query: string) => void;
+};
+
+const SearchCustomer: React.FC<SearchCustomerProps> = ({ onSearch }) => {
   const { colors } = useTheme();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (text: string) => {
+    setSearchQuery(text);
+    onSearch(text);
+  };
+
   return (
     <View>
       <View style={{ flexDirection: "row", paddingHorizontal: 24, gap: 12 }}>
@@ -36,10 +47,13 @@ const SearchCustomer = () => {
               opacity: 0.5,
             }}
             placeholder="Tìm kiếm khách hàng"
+            value={searchQuery}
+            onChangeText={handleSearch}
           />
         </View>
       </View>
     </View>
   );
 };
+
 export default SearchCustomer;

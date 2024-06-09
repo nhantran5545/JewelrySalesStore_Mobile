@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList,Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, Alert, ScrollView } from 'react-native';
 import { useRoute } from '@react-navigation/native';
-import { RouteProp } from '@react-navigation/native';
+import { RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../navigators/RootNavigator';
 import { getCart } from '../utils/cartUtil';
 import { FontAwesome } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { createInvoice } from '../api/api';
 
 type CreateInvoiceScreenRouteProp = RouteProp<RootStackParamList, 'CreateInvoice'>;
 
@@ -14,12 +16,20 @@ interface CartItem {
   name: string;
   price: number;
   imageUrl: string;
+  quantity: number;
 }
+
+const tierIcons: { [key: string]: JSX.Element } = {
+  "Hạng Kim Cương": <FontAwesome name="diamond" size={24} color="#16a0bc" />,
+  "Hạng Bạc": <MaterialCommunityIcons name="gold" size={24} color="#b6b1b1" />,
+  "Hạng Vàng": <MaterialCommunityIcons name="gold" size={24} color="#ecec58" />,
+};
 
 const CreateInvoiceScreen: React.FC = () => {
   const route = useRoute<CreateInvoiceScreenRouteProp>();
   const customer = route.params.customer;
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -35,7 +45,7 @@ const CreateInvoiceScreen: React.FC = () => {
 
   const getTotalPrice = () => {
     const totalPrice = calculateTotalPrice();
-    const discount = totalPrice * 0.05; // 5% discount
+    const discount = (totalPrice * customer.discountPercent) / 100;
     const discountedPrice = totalPrice - discount;
     return {
       totalPrice: totalPrice.toLocaleString(),
@@ -50,61 +60,56 @@ const CreateInvoiceScreen: React.FC = () => {
       <View style={styles.itemInfo}>
         <Text style={styles.itemName}>{item.name}</Text>
         <Text style={styles.itemPrice}>Giá: {item.price.toLocaleString()} VND</Text>
-        <Text style={styles.itemQuantity}>Số Lượng: 1</Text>
+        <Text style={styles.itemQuantity}>Số Lượng: {item.quantity}</Text>
       </View>
     </View>
   );
 
-  // const handleCreateInvoice = () => {
-  //   // Handle create invoice action
-  //   alert('Invoice Created');
-  // };
-
   const handleCreateInvoice = async () => {
     try {
+
       const invoice = {
-        customer,
-        items: cartItems,
-        totalPrice: calculateTotalPrice(),
-        discount: calculateTotalPrice() * 0.05,
-        finalPrice: calculateTotalPrice() * 0.95,
-        date: new Date().toISOString()
+        customerId: customer.customerId,
+        invidualPromotionDiscount: 0,
+        promotionReason: "string",
+        orderSellDetails: cartItems.map(item => ({
+          productId: item.id,
+          quantity: item.quantity
+        }))
       };
 
-      const response = await fetch('http://10.0.128.112:3000/invoices', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(invoice)
-      });
+      const response = await createInvoice(invoice);
 
-      if (response.ok) {
-        Alert.alert('Success', 'Invoice Created Successfully');
-      } else {
-        Alert.alert('Error', 'Failed to create invoice');
-      }
+      Alert.alert('Success', 'Invoice Created Successfully');
+      // Clear the cart or navigate to another screen if needed
     } catch (error) {
       console.error(error);
       Alert.alert('Error', 'An error occurred while creating invoice');
     }
-  };
 
+  };
 
   const { totalPrice, discountedPrice, discount } = getTotalPrice();
 
   return (
     <View style={styles.container}>
       <View style={styles.customerInfo}>
-        <Text style={styles.title}>Thông tin Khách hàng</Text>
-        <Text style={styles.infoText}>Họ và tên: {customer.name}</Text>
-        <Text style={styles.infoText}>Số điện thoại: {customer.phone}</Text>
-        <Text style={styles.infoText}>Địa chỉ: {customer.address}</Text>
+        <View style={styles.titleCustomerContainer}>
+          <Text style={styles.titleCustomer}>Thông Tin Khách Hàng</Text>
+          <Text style={styles.iconRank}>
+            {customer.tierName && tierIcons[customer.tierName]}
+          </Text>
+        </View>
+        <View style={styles.row}>
+          <Text style={styles.customerName}>{customer.name}</Text>
+          <Text style={styles.customerPhone}>{customer.phone}</Text>
+        </View>
+        <Text style={styles.customerAddress}>{customer.address}</Text>
       </View>
       {/* Display cart products here */}
       <View style={styles.cartContainer}>
         <Text style={styles.sectionTitle}>
-          <FontAwesome name="shopping-bag" size={24} color="black" /> Giỏ Hàng
+          <FontAwesome name="shopping-bag" size={24} color="#FF6347" /> Giỏ Hàng
         </Text>
         <FlatList
           data={cartItems}
@@ -115,14 +120,14 @@ const CreateInvoiceScreen: React.FC = () => {
       </View>
       {/* Display promotions and final price here */}
       <View style={styles.promotionContainer}>
-        <Text style={styles.sectionTitle}><Fontisto name="shopping-sale" size={24} color="black" /> Khuyến Mãi: 5%</Text>
+        <Text style={styles.sectionTitle}><Fontisto name="shopping-sale" size={24} color="#FF6347" /> Khuyến Mãi: {customer.discountPercent}%</Text>
         <Text style={styles.price}>Tổng Giá: {totalPrice} VND</Text>
-        <Text>Giảm giá: {discount} VND</Text>
+        <Text style={styles.discount}>Giảm giá: {discount} VND</Text>
+        <Text style={styles.finalPrice}>Giá phải thanh toán: {discountedPrice} VND</Text>
+        <TouchableOpacity style={styles.button} onPress={handleCreateInvoice}>
+          <Text style={styles.buttonText}>Tạo Hóa Đơn</Text>
+        </TouchableOpacity>
       </View>
-      <Text style={styles.finalPrice}>Giá phải thanh toán: {discountedPrice} VND</Text>
-      <TouchableOpacity style={styles.button} onPress={handleCreateInvoice}>
-        <Text style={styles.buttonText}>Tạo Hóa Đơn</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -136,7 +141,8 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 5
+    marginBottom: 5,
+    color: '#333'
   },
   title: {
     fontSize: 24,
@@ -144,13 +150,46 @@ const styles = StyleSheet.create({
     marginBottom: 32,
     textAlign: 'center',
   },
+  titleCustomer: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    textAlign: 'center',
+  },
   customerInfo: {
     marginBottom: 15,
     padding: 16,
     backgroundColor: '#FFFFFF',
     borderRadius: 8,
-    borderColor: '#000000',
+    borderColor: '#ddd',
     borderWidth: 1,
+  },
+  titleCustomerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10
+  },
+  iconRank: {
+    position: 'absolute',
+    right: 0,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  customerName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  customerPhone: {
+    fontSize: 18,
+    color: '#666',
+  },
+  customerAddress: {
+    fontSize: 18,
+    marginTop: 8,
+    textAlign: 'center'
   },
   infoText: {
     fontSize: 18,
@@ -165,12 +204,12 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   cartContainer: {
-    height: 200,
+    flex: 1,
     marginBottom: 15,
     padding: 16,
     backgroundColor: '#FFFFFF',
     borderRadius: 8,
-    borderColor: '#000000',
+    borderColor: '#ddd',
     borderWidth: 1,
   },
   image: {
@@ -182,13 +221,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 16,
+    color: '#FF6347'
   },
   promotionContainer: {
     marginBottom: 32,
     padding: 16,
     backgroundColor: '#FFFFFF',
     borderRadius: 8,
-    borderColor: '#000000',
+    borderColor: '#ddd',
     borderWidth: 1,
   },
   finalPrice: {
@@ -199,36 +239,48 @@ const styles = StyleSheet.create({
     color: "#FF6347"
   },
   button: {
-    position: 'absolute',
-    bottom: 30,
     backgroundColor: '#FF6347',
     paddingVertical: 12,
     paddingHorizontal: 32,
     borderRadius: 8,
     alignSelf: 'center',
+    marginTop: 20,
+    width: '80%'
   },
   buttonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
+    textAlign: 'center'
   },
   listContainer: {
-    paddingVertical: 10, // Bạn có thể tùy chỉnh các giá trị này
+    paddingVertical: 10,
   },
   cartItem: {
     marginBottom: 10,
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#F9F9F9',
+    padding: 10,
+    borderRadius: 8,
+    borderColor: '#ddd',
+    borderWidth: 1,
   },
   itemName: {
     fontSize: 18,
     fontWeight: 'bold',
     marginLeft: 10,
+    color: '#333'
   },
   itemPrice: {
     fontSize: 16,
     marginLeft: 10,
+    color: '#666'
   },
+  discount: {
+    fontSize: 16,
+    color: '#666'
+  }
 });
 
 export default CreateInvoiceScreen;

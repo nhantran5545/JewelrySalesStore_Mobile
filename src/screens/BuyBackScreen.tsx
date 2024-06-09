@@ -5,18 +5,18 @@ import { RootStackParamList } from '../navigators/RootNavigator';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 
-// type BuyBackScreenNavigationProp = NativeStackNavigationProp<
-//   RootStackParamList,
-//   'BuyBack'
-// >;
+type BuyBackScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'BuyBack'
+>;
 
 const BuyBackScreen: React.FC = () => {
-  // const navigation = useNavigation<BuyBackScreenNavigationProp>();
+  const navigation = useNavigation<BuyBackScreenNavigationProp>();
 
   const handleGuestCustomer = () => {
     // Chuyển đến trang dành cho Khách Vãn Lai
-    // navigation.navigate('GuestCustomer');
-    alert('khách Vãng lai');
+    navigation.navigate('GuestCustomer');
+    // alert('khách Vãng lai');
   };
 
   const handleStoreCustomer = () => {
@@ -27,15 +27,15 @@ const BuyBackScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Chọn Loại Khách Hàng</Text>
+      <Text style={styles.title}>Chọn Loại Sản Phẩm Mua Lại</Text>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={handleGuestCustomer}>
           <Ionicons name="person-outline" size={40} color="black" />
-          <Text style={styles.buttonText}>Khách Vãng Lai</Text>
+          <Text style={styles.buttonText}>Sản phẩm ngoài cửa hàng</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={handleStoreCustomer}>
           <Ionicons name="person-sharp" size={40} color="black" />
-          <Text style={styles.buttonText}>Khách Cửa Hàng</Text>
+          <Text style={styles.buttonText}>Sản phẩm từ cửa hàng</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -75,6 +75,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginTop: 8,
+    width: 140,
+    textAlign:'center'
   },
 });
 

@@ -15,6 +15,9 @@ import { useTheme } from "@react-navigation/native";
 import { colors } from "../utils/color";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import PrimaryButton from "../components/PrimaryButton";
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 interface LoginScreenProps {
   onLogin: () => void; // Callback function to handle successful login
@@ -27,14 +30,34 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
   const dimensions = useWindowDimensions();
   const [secureEntery, setSecureEntery] = useState(true);
 
-  const handleLogin = () => {
-    // Mock login logic - replace this with actual authentication
-    if (username === "staff" && password === "password") {
-      onLogin(); // Call the onLogin callback if login is successful
-    } else {
+  // const handleLogin = () => {
+  //   // Mock login logic - replace this with actual authentication
+  //   if (username === "staff" && password === "password") {
+  //     onLogin(); // Call the onLogin callback if login is successful
+  //   } else {
+  //     alert("Invalid credentials");
+  //   }
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post('https://bfrsserver.azurewebsites.net/api/Accounts/login', {
+        username,
+        password
+      });
+      
+      const { token, account } = response.data;
+      
+      if (account.role === 'Seller') {
+        await AsyncStorage.setItem('token', token);
+        onLogin(); // Call the onLogin callback if login is successful
+      } else {
+        alert("Invalid credentials");
+      }
+    } catch (error) {
+      console.error(error);
       alert("Invalid credentials");
     }
   };
+
   return (
     <KeyboardAvoidingView behavior="position" style={{ flex: 1 }}>
       <SafeAreaView
@@ -53,7 +76,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
           }}
           
         >
-          {/* <Image source={require('../assets/images/JewelryLogo.png')} style={{width: 688, height: 688}}/> */}
+          <Image source={require('../assets/images/JewelryLogo.png')} style={{width: 688, height: 688}}/>
         </Animated.View>
 
         <View style={{ padding: 27, marginBottom: 30 }}>
@@ -85,7 +108,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
               style={{ position: "relative", width: "100%" }}
             >
               <TextInput
-                placeholder="Your Email"
+                placeholder="Tài Khoản"
                 style={{
                   fontSize: 16,
                   fontWeight: "500",
@@ -122,7 +145,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
               }}
             >
               <TextInput
-                placeholder="Your Password"
+                placeholder="Mật Khảu"
                 style={{
                   fontSize: 16,
                   fontWeight: "500",

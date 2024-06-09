@@ -1,20 +1,23 @@
-// CustomerListScreen.tsx
 import React, { useState, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { RootStackScreenProps } from '../navigators/RootNavigator';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigators/RootNavigator';
 import { Feather } from '@expo/vector-icons';
-import axios from 'axios';
-import SearchBar from '../components/SearchBar';
+import { fetchCustomers } from '../api/api';
 import SearchCustomer from '../components/SearchCustomer';
+import { FontAwesome } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 type Customer = {
-  id: string;
+  customerId: string;
+  tierId: number;
+  tierName: string;
   name: string;
   phone: string;
   address: string;
+  loyaltyPoints: number;
+  discountPercent: number;
 };
 
 type CustomerListScreenNavigationProp = NativeStackNavigationProp<
@@ -22,23 +25,28 @@ type CustomerListScreenNavigationProp = NativeStackNavigationProp<
   'CustomerList'
 >;
 
+const tierIcons: { [key: string]: JSX.Element } = {
+  "Hạng Kim Cương": <FontAwesome name="diamond" size={24} color="#16a0bc" />,
+  "Hạng Bạc": <MaterialCommunityIcons name="gold" size={24} color="#b6b1b1" />,
+  "Hạng Vàng": <MaterialCommunityIcons name="gold" size={24} color="#ecec58" />,
+};
+
 const CustomerListScreen: React.FC = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  // const navigation = useNavigation<RootStackScreenProps<'CustomerList'>['navigation']>();
   const navigation = useNavigation<CustomerListScreenNavigationProp>();
-
 
   useFocusEffect(
     useCallback(() => {
-      const fetchCustomers = async () => {
+      const fetchCustomerData = async () => {
         try {
           setLoading(true);
           setError(null);
-          
-          const response = await axios.get('http://10.0.128.112:3000/customers');
-          setCustomers(response.data);
+          const data = await fetchCustomers();
+          setCustomers(data);
+          setFilteredCustomers(data); // Ban đầu, filteredCustomers sẽ chứa toàn bộ danh sách customers
         } catch (error) {
           setError('Failed to fetch customers');
         } finally {
@@ -46,7 +54,7 @@ const CustomerListScreen: React.FC = () => {
         }
       };
 
-      fetchCustomers();
+      fetchCustomerData();
     }, [])
   );
 
@@ -69,11 +77,24 @@ const CustomerListScreen: React.FC = () => {
     navigation.navigate('CustomerInfo', { customer });
   };
 
+  const handleSearch = (query: string) => {
+    const filtered = customers.filter(
+      (customer) =>
+        customer.name.toLowerCase().includes(query.toLowerCase()) ||
+        customer.phone.includes(query)
+    );
+    setFilteredCustomers(filtered);
+  };
+
   const renderItem = ({ item }: { item: Customer }) => (
     <TouchableOpacity style={styles.item} onPress={() => handleCustomerSelect(item)}>
-      <Text style={styles.itemText}>{item.name}</Text>
+      <View style={styles.itemHeader}>
+        <Text style={styles.itemText}>{item.name}</Text>
+        {item.tierName && tierIcons[item.tierName]}
+      </View>
       <Text style={styles.itemSubText}>{item.phone}</Text>
       <Text style={styles.itemSubText}>{item.address}</Text>
+      <Text style={styles.itemSubText}>Điểm: {item.loyaltyPoints}</Text>
     </TouchableOpacity>
   );
 
@@ -103,11 +124,11 @@ const CustomerListScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <SearchCustomer/>
+      <SearchCustomer onSearch={handleSearch} />
       <FlatList
-        data={customers}
+        data={filteredCustomers}
         renderItem={renderItem}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.customerId}
         contentContainerStyle={styles.listContainer}
       />
     </View>
@@ -133,9 +154,18 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 5 },
     elevation: 3,
   },
+  itemHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   itemText: {
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  tierIcon: {
+    width: 24,
+    height: 24,
   },
   itemSubText: {
     fontSize: 14,

@@ -54,6 +54,7 @@ const TabsNavigator = () => {
         options={{
           ...TransitionPresets.SlideFromRightIOS,
           headerShown: true,
+          title: 'Giỏ Hàng' ,
           headerTitleStyle: {
             fontSize: 22,
             fontWeight: '700'
@@ -72,6 +73,8 @@ const TabsNavigator = () => {
         name="BuyBack"
         component={BuyBackScreen}
         options={{
+          headerShown: true,
+          title: 'Mua lại' ,
           tabBarIcon(props) {
             return <Icons name="store" {...props} />;
           },

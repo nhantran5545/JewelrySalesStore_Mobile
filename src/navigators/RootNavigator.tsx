@@ -10,12 +10,20 @@ import CustomerInfoScreen from "../screens/CustomerInfoScreen";
 import CustomerListScreen from "../screens/CustomerListScreen";
 import AddCustomerScreen from "../screens/AddCustomerScreen";
 import CreateInvoiceScreen from "../screens/CreateInvoiceScreen";
+import GuestCustomerScreen from "../screens/GuestCustomerScreen";
+import ProductListScreen from "../screens/ProductListScreen";
+import CreateProductScreen from "../screens/CreateProductScreen";
+import CreateInvoiceBuyBackScreen from "../screens/CreateInvoiceBuyBackScreen";
 
 type Customer = {
-  id: string;
+  customerId: string;
+  tierId: number;
+  tierName: string;
   name: string;
   phone: string;
   address: string;
+  loyaltyPoints: number;
+  discountPercent: number;
 };
 
 export type RootStackParamList = {
@@ -29,6 +37,11 @@ export type RootStackParamList = {
   CustomerList: undefined;
   AddCustomer: undefined;
   CreateInvoice: { customer: Customer };
+  BuyBack: undefined;
+  GuestCustomer: undefined;
+  ProductList: undefined;
+  CreateProduct: undefined;
+  CreateInvoiceBuyBack: undefined;
 };
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -58,6 +71,8 @@ const RootNavigator = () => {
         component={CustomerInfoScreen}
         options={{
           headerShown: true,
+          title: 'Thông Tin Khách Hàng',
+          headerTitleAlign: 'center',
         }}
       />
       <RootStack.Screen
@@ -65,6 +80,8 @@ const RootNavigator = () => {
         component={CustomerInfoScreen}
         options={{
           headerShown: true,
+          title: 'Thông Tin Khách Hàng',
+          headerTitleAlign: 'center',
         }}
       />
       <RootStack.Screen
@@ -89,6 +106,42 @@ const RootNavigator = () => {
         options={{
           headerShown: true,
           title: 'Tạo Hóa Đơn',
+          headerTitleAlign: 'center',
+        }}
+      />
+      <RootStack.Screen
+        name="GuestCustomer"
+        component={GuestCustomerScreen}
+        options={{
+          headerShown: true,
+          title: 'Thông Tin Khách Hàng',
+          headerTitleAlign: 'center',
+        }}
+      />
+      <RootStack.Screen
+        name="ProductList"
+        component={ProductListScreen}
+        options={{
+          headerShown: true,
+          title: 'Danh Sách Sản Phẩm',
+          headerTitleAlign: 'center',
+        }}
+      />
+      <RootStack.Screen
+        name="CreateProduct"
+        component={CreateProductScreen} 
+        options={{
+          headerShown: true,
+          title: 'Thông Tin Sản Phẩm Mua Lại',
+          headerTitleAlign: 'center',
+        }}
+      />
+      <RootStack.Screen
+        name="CreateInvoiceBuyBack"
+        component={CreateInvoiceBuyBackScreen} 
+        options={{
+          headerShown: true,
+          title: 'Tạo Hóa Đơn mua lại',
           headerTitleAlign: 'center',
         }}
       />

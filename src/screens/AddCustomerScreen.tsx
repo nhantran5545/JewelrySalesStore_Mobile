@@ -23,7 +23,7 @@ const AddCustomerScreen: React.FC = () => {
     }
 
     try {
-      await axios.post('http://10.0.128.112:3000/customers', {
+      await axios.post('http://10.87.15.48:3000/customers', {
         name,
         phone,
         address,

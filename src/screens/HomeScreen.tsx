@@ -22,6 +22,7 @@ import Animated, {
 } from "react-native-reanimated";
 import axios from "axios";
 import { addToCart } from "../utils/cartUtil";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 const CATEGORIES = [
@@ -104,6 +105,7 @@ type Product = {
   price: number;
   imageUrl: string;
   categoryId: number;
+  quantity: number;
 };
 
 const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
@@ -122,25 +124,45 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
     }
   };
 
+  const fetchData = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      console.log(token);
+      if (!token) {
+        console.error('No token found');
+        return;
+      }
+
+      // // Gọi API để lấy danh sách danh mục
+      // const categoryResponse = await axios.get<Category[]>('https://bfrsserver.azurewebsites.net/api/Categories', {
+      //   headers: {
+      //     Authorization: `Bearer ${token}`,
+      //   },
+      // });
+      // setCategories(categoryResponse.data);
+
+      // Gọi API để lấy danh sách sản phẩm
+      const productResponse = await axios.get('https://bfrsserver.azurewebsites.net/api/Products/allProductsAvaiable', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const fetchedProducts = productResponse.data.map((product: any) => ({
+        id: product.productId,
+        name: product.productName,
+        price: product.productPrice,
+        imageUrl: product.img,
+        categoryId: product.categoryId,
+        quantity: product.quantity,
+      }));
+      setProducts(fetchedProducts);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
   useEffect(() => {
-    // Gọi API để lấy danh sách danh mục
-    axios.get<Category[]>('http://10.0.128.112:3000/categories')
-      .then(response => {
-        setCategories(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching categories:', error);
-      });
-
-    // Gọi API để lấy danh sách sản phẩm
-    axios.get<Product[]>('http://10.0.128.112:3000/products')
-      .then(response => {
-        setProducts(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching products:', error);
-      });
-
+    fetchData();
   }, []);
   
 
