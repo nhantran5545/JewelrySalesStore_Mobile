@@ -17,7 +17,7 @@ import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import PrimaryButton from "../components/PrimaryButton";
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { clearCart } from "../utils/cartUtil";
 
 interface LoginScreenProps {
   onLogin: () => void; // Callback function to handle successful login
@@ -43,6 +43,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
         username,
         password
       });
+
+      // clearCart();
       
       const { token, account } = response.data;
       

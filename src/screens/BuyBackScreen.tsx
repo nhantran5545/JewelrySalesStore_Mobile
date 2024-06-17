@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../navigators/RootNavigator';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons, FontAwesome, FontAwesome5 } from '@expo/vector-icons';
 
 type BuyBackScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -13,28 +13,27 @@ type BuyBackScreenNavigationProp = NativeStackNavigationProp<
 const BuyBackScreen: React.FC = () => {
   const navigation = useNavigation<BuyBackScreenNavigationProp>();
 
-  const handleGuestCustomer = () => {
-    // Chuyển đến trang dành cho Khách Vãn Lai
-    navigation.navigate('GuestCustomer');
-    // alert('khách Vãng lai');
+  const handleProductOutStore = () => {
+    // Chuyển đến trang dành cho sản phẩm mua lại ngoài cửa hàng
+    navigation.navigate('ProductList');
   };
 
-  const handleStoreCustomer = () => {
+  const handleProductInStore = () => {
     // Chuyển đến trang dành cho Khách của Cửa Hàng
-    // navigation.navigate('StoreCustomer');
-    alert('khách cửa hàng');
+    navigation.navigate('OrderList');
+    // alert('Mua sản phẩm từ cửa hàng');
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Chọn Loại Sản Phẩm Mua Lại</Text>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleGuestCustomer}>
-          <Ionicons name="person-outline" size={40} color="black" />
+        <TouchableOpacity style={styles.button} onPress={handleProductOutStore}>
+          <FontAwesome name="external-link-square" size={40} color="black" />
           <Text style={styles.buttonText}>Sản phẩm ngoài cửa hàng</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={handleStoreCustomer}>
-          <Ionicons name="person-sharp" size={40} color="black" />
+        <TouchableOpacity style={styles.button} onPress={handleProductInStore}>
+          <FontAwesome5 name="store" size={40} color="black" />
           <Text style={styles.buttonText}>Sản phẩm từ cửa hàng</Text>
         </TouchableOpacity>
       </View>
@@ -76,7 +75,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 8,
     width: 140,
-    textAlign:'center'
+    textAlign: 'center'
   },
 });
 

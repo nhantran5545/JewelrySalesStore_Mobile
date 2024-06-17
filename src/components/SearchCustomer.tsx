@@ -46,7 +46,7 @@ const SearchCustomer: React.FC<SearchCustomerProps> = ({ onSearch }) => {
               color: colors.text,
               opacity: 0.5,
             }}
-            placeholder="Tìm kiếm khách hàng"
+            placeholder="Tìm kiếm"
             value={searchQuery}
             onChangeText={handleSearch}
           />

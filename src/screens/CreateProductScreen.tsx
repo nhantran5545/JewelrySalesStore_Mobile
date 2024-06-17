@@ -1,67 +1,159 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RootStackParamList } from '../navigators/RootNavigator';
 import DropdownTypeProduct from '../components/DropdownTypeProduct';
+import { getMaterials, reviewMaterialPrice, reviewDiamondPrice } from '../api/api';
 
 type CreateProductScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'CreateProduct'>;
-
-const productTypes = [
-  { label: 'Vàng', value: 'Vàng' },
-  { label: 'Trang Sức', value: 'Trang Sức' },
-  { label: 'Kim Cương', value: 'Kim Cương' },
-];
-
-const goldTypes = [
-  { label: 'Vàng 18k', value: 'Vàng 18k' },
-  { label: 'Vàng 24k', value: 'Vàng 24k' },
-];
-
-const diamondTypes = [
-  { label: 'Kim Cương Type 1', value: 'Kim Cương Type 1' },
-  { label: 'Kim Cương Type 2', value: 'Kim Cương Type 2' },
-];
 
 const CreateProductScreen: React.FC = () => {
   const navigation = useNavigation<CreateProductScreenNavigationProp>();
   const [productType, setProductType] = useState('Vàng');
-  const [goldType, setGoldType] = useState('');
-  const [goldGram, setGoldGram] = useState('');
-  const [diamondType, setDiamondType] = useState('');
-  const [diamondGram, setDiamondGram] = useState('');
+  const [material, setMaterial] = useState('');
+  const [materialId, setMaterialId] = useState<number | null>(null);
+  const [gram, setGram] = useState('');
   const [carat, setCarat] = useState('');
+  const [origin, setOrigin] = useState('');
   const [color, setColor] = useState('');
   const [clarity, setClarity] = useState('');
   const [cut, setCut] = useState('');
   const [jewelryType, setJewelryType] = useState('');
   const [price, setPrice] = useState(0);
+  const [goldPrice, setGoldPrice] = useState(0);
+  const [diamondPrice, setDiamondPrice] = useState(0);
+  const [materials, setMaterials] = useState<{ label: string; value: string; materialId: number }[]>([]);
 
   useEffect(() => {
-    calculatePrice();
-  }, [productType, goldType, goldGram, diamondType, diamondGram]);
+    fetchMaterials();
+  }, []);
 
-  const calculatePrice = () => {
-    let newPrice = 0;
-    if (productType === 'Vàng') {
-      newPrice = parseFloat(goldGram) * (goldType === 'Vàng 24k' ? 5000000 : 3000000);
-    } else if (productType === 'Kim Cương') {
-      newPrice = parseFloat(diamondGram) * 10000000; // Example price calculation
-    } else if (productType === 'Trang Sức') {
-      newPrice = (parseFloat(goldGram) * (goldType === 'Vàng 24k' ? 5000000 : 3000000)) + (parseFloat(diamondGram) * 10000000);
+  useEffect(() => {
+    setGoldPrice(0);
+    setDiamondPrice(0);
+    if (productType === 'Vàng' || productType === 'Bạc' || productType === 'Trang Sức') {
+      if (material && gram) {
+        calculateGoldPrice();
+      }
     }
-    setPrice(newPrice);
+    if (productType === 'Kim Cương' || productType === 'Trang Sức') {
+      if (carat && color && clarity && cut && origin) {
+        calculateDiamondPrice();
+      }
+    }
+  }, [productType, material, gram, carat, color, clarity, cut]);
+
+  useEffect(() => {
+    setPrice(goldPrice + diamondPrice);
+  }, [goldPrice, diamondPrice]);
+
+  const fetchMaterials = async () => {
+    try {
+      const data = await getMaterials();
+      const formattedMaterials = data.flatMap((materialType: any) => {
+        return materialType.materials.map((material: any) => ({
+          label: material.materialName,
+          value: material.materialName,
+          materialId: material.materialId
+        }));
+      });
+      setMaterials(formattedMaterials);
+    } catch (error) {
+      Alert.alert('Error fetching materials', 'Please try again later.');
+    }
+  };
+
+  const calculateGoldPrice = async () => {
+    try {
+      const selectedMaterial = materials.find((item) => item.label === material);
+      if (selectedMaterial) {
+        const weight = parseFloat(gram);
+        const response = await reviewMaterialPrice(selectedMaterial.materialId, weight);
+        if (response.success) {
+          setGoldPrice(response.price);
+        } else {
+          // Alert.alert('Error calculating price', response.errorMessage || 'Please try again later.');
+        }
+      }
+    } catch (error) {
+      // Alert.alert('Error calculating price', 'Please try again later.');
+    }
+  };
+
+  const calculateDiamondPrice = async () => {
+    try {
+      const weight = parseFloat(carat);
+      const response = await reviewDiamondPrice(origin, weight, color, clarity, cut);
+      if (response.success) {
+        setDiamondPrice(response.price);
+      } else {
+        // Alert.alert('Error calculating diamond price', response.errorMessage || 'Please try again later.');
+      }
+    } catch (error) {
+      // Alert.alert('Error calculating diamond price', 'Please try again later.');
+    }
   };
 
   const handleSaveProduct = async () => {
-    const product = { id: Date.now().toString(), productType, goldType, goldGram, diamondType, diamondGram, carat, color, clarity, cut, jewelryType, price };
+
+
+    const product = {
+      id: Date.now().toString(),
+      productType,
+      origin,
+      material,
+      materialId,
+      gram,
+      carat,
+      color,
+      clarity,
+      cut,
+      jewelryType,
+      price,
+    };
+
     const storedProducts = await AsyncStorage.getItem('products');
     const products = storedProducts ? JSON.parse(storedProducts) : [];
     products.push(product);
     await AsyncStorage.setItem('products', JSON.stringify(products));
     navigation.goBack();
   };
+
+
+  const productTypes = [
+    { label: 'Vàng', value: 'Vàng' },
+    { label: 'Bạc', value: 'Bạc' },
+    { label: 'Trang Sức', value: 'Trang Sức' },
+    { label: 'Kim Cương', value: 'Kim Cương' },
+  ];
+
+  const originOptions = [
+    { label: 'Thiên nhiên', value: 'Thiên nhiên' },
+    { label: 'Nhân tạo', value: 'Nhân tạo' }
+  ];
+
+  const colorOptions = [
+    { label: 'D', value: 'D' },
+    { label: 'E', value: 'E' },
+    { label: 'F', value: 'F' },
+    { label: 'J', value: 'J' },
+  ];
+
+  const clarityOptions = [
+    { label: 'IF', value: 'IF' },
+    { label: 'VVS1', value: 'VVS1' },
+    { label: 'VVS2', value: 'VVS2' },
+    { label: 'VS1', value: 'VS1' },
+    { label: 'VS2', value: 'VS2' },
+  ];
+
+  const cutOptions = [
+    { label: 'Excellent', value: 'Excellent' },
+    { label: 'Very Good', value: 'Very Good' },
+    { label: 'Good', value: 'Good' },
+  ];
 
   return (
     <View style={styles.container}>
@@ -81,16 +173,54 @@ const CreateProductScreen: React.FC = () => {
             onChangeText={setJewelryType}
           />
           <DropdownTypeProduct
-            data={goldTypes}
-            value={goldType}
-            onChange={(item) => setGoldType(item.value)}
+            data={materials.filter((item) => item.label.includes('Vàng'))}
+            value={material}
+            // onChange={(item) => setMaterial(item.value)}
+            onChange={(item) => {
+              setMaterial(item.value);
+              const selectedMaterial = materials.find((mat) => mat.label === item.value);
+              if (selectedMaterial) {
+                setMaterialId(selectedMaterial.materialId);
+              }
+            }}
             placeholder="Chọn loại vàng"
           />
           <TextInput
             style={styles.input}
             placeholder="Gram"
-            value={goldGram}
-            onChangeText={setGoldGram}
+            value={gram}
+            onChangeText={setGram}
+            keyboardType="numeric"
+          />
+          <Text style={styles.price}>Gía: {price.toLocaleString()} VND</Text>
+        </View>
+      )}
+      {productType === 'Bạc' && (
+        <View>
+          <TextInput
+            style={styles.input}
+            placeholder="Nhập tên trang sức"
+            value={jewelryType}
+            onChangeText={setJewelryType}
+          />
+          <DropdownTypeProduct
+            data={materials.filter((item) => item.label.includes('Bạc'))}
+            value={material}
+            // onChange={(item) => setMaterial(item.value)}
+            onChange={(item) => {
+              setMaterial(item.value);
+              const selectedMaterial = materials.find((mat) => mat.label === item.value);
+              if (selectedMaterial) {
+                setMaterialId(selectedMaterial.materialId);
+              }
+            }}
+            placeholder="Chọn loại bạc"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Gram"
+            value={gram}
+            onChangeText={setGram}
             keyboardType="numeric"
           />
           <Text style={styles.price}>Gía: {price.toLocaleString()} VND</Text>
@@ -98,49 +228,42 @@ const CreateProductScreen: React.FC = () => {
       )}
       {productType === 'Kim Cương' && (
         <View>
-          <DropdownTypeProduct
-            data={diamondTypes}
-            value={diamondType}
-            onChange={(item) => setDiamondType(item.value)}
-            placeholder="Chọn loại kim cương"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Gram kim cương"
-            value={diamondGram}
-            onChangeText={setDiamondGram}
-            keyboardType="numeric"
-          />
           <TextInput
             style={styles.input}
             placeholder="Nhập tên trang sức"
             value={jewelryType}
             onChangeText={setJewelryType}
           />
-          {/* <TextInput
+          <DropdownTypeProduct
+            data={originOptions}
+            value={origin}
+            onChange={(item) => setOrigin(item.value)}
+            placeholder="Chọn Origin"
+          />
+          <TextInput
             style={styles.input}
             placeholder="Carat"
             value={carat}
             onChangeText={setCarat}
             keyboardType="numeric"
-          /> */}
-          <TextInput
-            style={styles.input}
-            placeholder="Color"
+          />
+          <DropdownTypeProduct
+            data={colorOptions}
             value={color}
-            onChangeText={setColor}
+            onChange={(item) => setColor(item.value)}
+            placeholder="Chọn Color"
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Clarity"
+          <DropdownTypeProduct
+            data={clarityOptions}
             value={clarity}
-            onChangeText={setClarity}
+            onChange={(item) => setClarity(item.value)}
+            placeholder="Chọn Clarity"
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Cut"
+          <DropdownTypeProduct
+            data={cutOptions}
             value={cut}
-            onChangeText={setCut}
+            onChange={(item) => setCut(item.value)}
+            placeholder="Chọn Cut"
           />
           <Text style={styles.price}>Gía: {price.toLocaleString()} VND</Text>
         </View>
@@ -153,31 +276,26 @@ const CreateProductScreen: React.FC = () => {
             value={jewelryType}
             onChangeText={setJewelryType}
           />
+          <Text style={{ fontSize: 20, textAlign: 'center' }}>Vàng</Text>
           <DropdownTypeProduct
-            data={goldTypes}
-            value={goldType}
-            onChange={(item) => setGoldType(item.value)}
+            data={materials.filter((item) => item.label.includes('Vàng'))}
+            value={material}
+            onChange={(item) => setMaterial(item.value)}
             placeholder="Chọn loại vàng"
           />
           <TextInput
             style={styles.input}
             placeholder="Gram vàng"
-            value={goldGram}
-            onChangeText={setGoldGram}
+            value={gram}
+            onChangeText={setGram}
             keyboardType="numeric"
           />
+          <Text style={{ fontSize: 20, textAlign: 'center' }}>Kim Cương</Text>
           <DropdownTypeProduct
-            data={diamondTypes}
-            value={diamondType}
-            onChange={(item) => setDiamondType(item.value)}
-            placeholder="Chọn loại kim cương"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Gram kim cương"
-            value={diamondGram}
-            onChangeText={setDiamondGram}
-            keyboardType="numeric"
+            data={originOptions}
+            value={origin}
+            onChange={(item) => setOrigin(item.value)}
+            placeholder="Chọn Origin"
           />
           <TextInput
             style={styles.input}
@@ -186,23 +304,23 @@ const CreateProductScreen: React.FC = () => {
             onChangeText={setCarat}
             keyboardType="numeric"
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Color"
+          <DropdownTypeProduct
+            data={colorOptions}
             value={color}
-            onChangeText={setColor}
+            onChange={(item) => setColor(item.value)}
+            placeholder="Chọn Color"
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Clarity"
+          <DropdownTypeProduct
+            data={clarityOptions}
             value={clarity}
-            onChangeText={setClarity}
+            onChange={(item) => setClarity(item.value)}
+            placeholder="Chọn Clarity"
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Cut"
+          <DropdownTypeProduct
+            data={cutOptions}
             value={cut}
-            onChangeText={setCut}
+            onChange={(item) => setCut(item.value)}
+            placeholder="Chọn Cut"
           />
           <Text style={styles.price}>
             Gía: {price.toLocaleString()} VND
@@ -256,6 +374,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 8,
     color: '#FF6347',
+    textAlign: 'center',
   },
 });
 

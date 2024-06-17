@@ -7,7 +7,7 @@ import { Feather } from '@expo/vector-icons';
 import { fetchCustomers } from '../api/api';
 import SearchCustomer from '../components/SearchCustomer';
 import { FontAwesome } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 
 type Customer = {
   customerId: string;
@@ -27,8 +27,9 @@ type CustomerListScreenNavigationProp = NativeStackNavigationProp<
 
 const tierIcons: { [key: string]: JSX.Element } = {
   "Hạng Kim Cương": <FontAwesome name="diamond" size={24} color="#16a0bc" />,
-  "Hạng Bạc": <MaterialCommunityIcons name="gold" size={24} color="#b6b1b1" />,
-  "Hạng Vàng": <MaterialCommunityIcons name="gold" size={24} color="#ecec58" />,
+  "Hạng Bạc": <MaterialIcons name="stars" size={24} color="#ada7a7" />,
+  "Hạng Vàng": <MaterialIcons name="stars" size={24} color="#fcf302" />,
+  "Hạng Đồng": <MaterialIcons name="stars" size={24} color="#726b055b" />
 };
 
 const CustomerListScreen: React.FC = () => {

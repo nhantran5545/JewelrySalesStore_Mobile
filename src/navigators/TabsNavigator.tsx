@@ -14,12 +14,14 @@ import CustomBottomTabs from "../components/CustomBottomTabs";
 import CartScreen from "../screens/CartScreen";
 import { FontAwesome5 } from '@expo/vector-icons';
 import BuyBackScreen from "../screens/BuyBackScreen";
+import Menu from "../screens/MenuScreen";
 
 export type TabsStackParamList = {
   Home: undefined;
   Cart: undefined;
   Profile: undefined;
   BuyBack: undefined;
+  Menu: undefined;
 };
 const TabsStack = createBottomTabNavigator<TabsStackParamList>();
 
@@ -81,11 +83,13 @@ const TabsNavigator = () => {
         }}
       />
       <TabsStack.Screen
-        name="Profile"
-        component={Example}
+        name="Menu"
+        component={Menu}
         options={{
+          headerShown: true,
+          title: 'Menu',
           tabBarIcon(props) {
-            return <Icons name="person" {...props} />;
+            return <Icons name="menu" {...props} />;
           },
         }}
       />

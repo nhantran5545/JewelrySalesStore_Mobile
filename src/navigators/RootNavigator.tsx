@@ -14,6 +14,12 @@ import GuestCustomerScreen from "../screens/GuestCustomerScreen";
 import ProductListScreen from "../screens/ProductListScreen";
 import CreateProductScreen from "../screens/CreateProductScreen";
 import CreateInvoiceBuyBackScreen from "../screens/CreateInvoiceBuyBackScreen";
+import OrderListScreen from "../screens/OrderListScreen";
+import OrderDetailScreen from "../screens/OrderDetailScreen";
+import CartBuyBackScreen from "../screens/CartBuyBackScreen";
+import OrderListPaidScreen from "../screens/OrderListPaidScreen";
+import ChooseCustomer from "../screens/ChooseCustomer";
+import CreateOrderBuyBackStoreScreen from "../screens/CreateOrderBuyBackStoreScreen";
 
 type Customer = {
   customerId: string;
@@ -41,7 +47,13 @@ export type RootStackParamList = {
   GuestCustomer: undefined;
   ProductList: undefined;
   CreateProduct: undefined;
-  CreateInvoiceBuyBack: undefined;
+  CreateInvoiceBuyBack: { customer: Customer };
+  OrderList: undefined;
+  OrderDetail: { orderSellId: number };
+  CartBuyBack: undefined;
+  OrderListPaid: undefined;
+  ChooseCustomer: undefined;
+  CreateInvoiceBuyBackStore: { customer: Customer };
 };
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -86,7 +98,7 @@ const RootNavigator = () => {
       />
       <RootStack.Screen
         name="CustomerList"
-        component={CustomerListScreen} 
+        component={CustomerListScreen}
         options={{
           headerShown: true,
           title: 'Danh Sách Khách Hàng',
@@ -95,14 +107,14 @@ const RootNavigator = () => {
       />
       <RootStack.Screen
         name="AddCustomer"
-        component={AddCustomerScreen} 
+        component={AddCustomerScreen}
         options={{
           headerShown: false,
         }}
       />
       <RootStack.Screen
         name="CreateInvoice"
-        component={CreateInvoiceScreen} 
+        component={CreateInvoiceScreen}
         options={{
           headerShown: true,
           title: 'Tạo Hóa Đơn',
@@ -129,7 +141,7 @@ const RootNavigator = () => {
       />
       <RootStack.Screen
         name="CreateProduct"
-        component={CreateProductScreen} 
+        component={CreateProductScreen}
         options={{
           headerShown: true,
           title: 'Thông Tin Sản Phẩm Mua Lại',
@@ -138,10 +150,64 @@ const RootNavigator = () => {
       />
       <RootStack.Screen
         name="CreateInvoiceBuyBack"
-        component={CreateInvoiceBuyBackScreen} 
+        component={CreateInvoiceBuyBackScreen}
         options={{
           headerShown: true,
           title: 'Tạo Hóa Đơn mua lại',
+          headerTitleAlign: 'center',
+        }}
+      />
+      <RootStack.Screen
+        name="OrderList"
+        component={OrderListScreen}
+        options={{
+          headerShown: true,
+          title: 'Danh sách các hóa đơn',
+          headerTitleAlign: 'center',
+        }}
+      />
+      <RootStack.Screen
+        name="OrderDetail"
+        component={OrderDetailScreen}
+        options={{
+          headerShown: true,
+          title: 'Chi tiết Hóa Đơn',
+          headerTitleAlign: 'center',
+        }}
+      />
+      <RootStack.Screen
+        name="CartBuyBack"
+        component={CartBuyBackScreen}
+        options={{
+          headerShown: true,
+          title: 'Giỏ Hàng Mua Lại',
+          headerTitleAlign: 'center',
+        }}
+      />
+      <RootStack.Screen
+        name="OrderListPaid"
+        component={OrderListPaidScreen}
+        options={{
+          headerShown: true,
+          title: 'Danh sách các hóa đơn',
+          headerTitleAlign: 'center',
+        }}
+      />
+      <RootStack.Screen
+        name="ChooseCustomer"
+        component={ChooseCustomer}
+        options={{
+          headerShown: true,
+          title: 'Chọn Khách Hàng',
+          headerTitleAlign: 'center',
+        }}
+      />
+      <RootStack.Screen
+        name="CreateInvoiceBuyBackStore"
+        component={CreateOrderBuyBackStoreScreen}
+        options={{
+          headerShown: true,
+          title: 'Tạo Hóa Đơn Mua Lại',
           headerTitleAlign: 'center',
         }}
       />

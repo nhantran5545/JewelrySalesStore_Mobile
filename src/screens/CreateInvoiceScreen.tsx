@@ -8,6 +8,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { createInvoice } from '../api/api';
+import { MaterialIcons } from '@expo/vector-icons';
 
 type CreateInvoiceScreenRouteProp = RouteProp<RootStackParamList, 'CreateInvoice'>;
 
@@ -21,8 +22,9 @@ interface CartItem {
 
 const tierIcons: { [key: string]: JSX.Element } = {
   "Hạng Kim Cương": <FontAwesome name="diamond" size={24} color="#16a0bc" />,
-  "Hạng Bạc": <MaterialCommunityIcons name="gold" size={24} color="#b6b1b1" />,
-  "Hạng Vàng": <MaterialCommunityIcons name="gold" size={24} color="#ecec58" />,
+  "Hạng Bạc": <MaterialIcons name="stars" size={24} color="#ada7a7" />,
+  "Hạng Vàng": <MaterialIcons name="stars" size={24} color="#fcf302" />,
+  "Hạng Đồng": <MaterialIcons name="stars" size={24} color="#726b055b" />
 };
 
 const CreateInvoiceScreen: React.FC = () => {
@@ -120,10 +122,14 @@ const CreateInvoiceScreen: React.FC = () => {
       </View>
       {/* Display promotions and final price here */}
       <View style={styles.promotionContainer}>
-        <Text style={styles.sectionTitle}><Fontisto name="shopping-sale" size={24} color="#FF6347" /> Khuyến Mãi: {customer.discountPercent}%</Text>
-        <Text style={styles.price}>Tổng Giá: {totalPrice} VND</Text>
-        <Text style={styles.discount}>Giảm giá: {discount} VND</Text>
-        <Text style={styles.finalPrice}>Giá phải thanh toán: {discountedPrice} VND</Text>
+        <View style={styles.promotionInfo}>
+          <Text style={styles.promotion}>
+          <Fontisto name="shopping-sale" size={16} color="#FF6347" /> Khuyến Mãi: {customer.discountPercent}%
+          </Text>
+          <Text style={styles.price}>Tổng Giá: {totalPrice} VND</Text>
+          <Text style={styles.discount}>Giảm giá: {discount} VND</Text>
+          <Text style={styles.finalPrice}>Giá thanh toán: {discountedPrice} VND</Text>
+        </View>
         <TouchableOpacity style={styles.button} onPress={handleCreateInvoice}>
           <Text style={styles.buttonText}>Tạo Hóa Đơn</Text>
         </TouchableOpacity>
@@ -135,11 +141,11 @@ const CreateInvoiceScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 16,
+    padding: 6,
     backgroundColor: '#F5F5F5',
   },
   price: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 5,
     color: '#333'
@@ -157,7 +163,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   customerInfo: {
-    marginBottom: 15,
+    marginBottom: 5,
     padding: 16,
     backgroundColor: '#FFFFFF',
     borderRadius: 8,
@@ -204,7 +210,8 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   cartContainer: {
-    flex: 1,
+    // flex: 1,
+    height: 350,
     marginBottom: 15,
     padding: 16,
     backgroundColor: '#FFFFFF',
@@ -224,28 +231,40 @@ const styles = StyleSheet.create({
     color: '#FF6347'
   },
   promotionContainer: {
-    marginBottom: 32,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     padding: 16,
     backgroundColor: '#FFFFFF',
-    borderRadius: 8,
+    borderTopWidth: 1,
     borderColor: '#ddd',
-    borderWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  promotionInfo: {
+    flex: 1,
+    paddingRight: 10,
+  },
+  promotion: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    color: '#FF6347'
   },
   finalPrice: {
-    textAlign: 'center',
-    fontSize: 20,
+    textAlign: 'left',
+    fontSize: 16,
     fontWeight: 'bold',
-    marginTop: 16,
-    color: "#FF6347"
+    color: "#FF6347",
+    marginBottom: 5,
   },
   button: {
     backgroundColor: '#FF6347',
     paddingVertical: 12,
-    paddingHorizontal: 32,
+    paddingHorizontal: 16,
     borderRadius: 8,
-    alignSelf: 'center',
-    marginTop: 20,
-    width: '80%'
   },
   buttonText: {
     color: '#FFFFFF',

@@ -88,7 +88,7 @@ const TabItem = ({
               ? "account-balance-wallet"
               : routeName === "BuyBack"
               ? "store"
-              : "person"
+              : "menu"
           }
           size={24}
           color={isActive ? colors.card : colors.text}

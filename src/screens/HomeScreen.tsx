@@ -23,55 +23,10 @@ import Animated, {
 import axios from "axios";
 import { addToCart } from "../utils/cartUtil";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-
-const CATEGORIES = [
-  "Ring",
-  "Necklace",
-  "Pendant",
-  "Earring",
-  "Shake",
-  "Ring",
-  "Charm",
-  "Neck Strap",
-  "Stirrups",
-];
+import { getCategory } from "../api/api";
 
 const AVATAR_URL =
   "https://scontent.fhan3-4.fna.fbcdn.net/v/t39.30808-6/397531770_1051616996022156_3370330046834720504_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeFMgvmDcTnhB5nozzUYqFv2AsodDh6apGcCyh0OHpqkZ5rSl-UPHnmjOQXyYyo-UWUvJ8_DdTvhH8b-LrF4mnde&_nc_ohc=E94nY0B2DjAQ7kNvgGnx0Ph&_nc_pt=1&_nc_ht=scontent.fhan3-4.fna&oh=00_AYBHugshxYM2-DEVYGfArotHK34E6HorRZe2dViseiriug&oe=664BE649";
-
-const PRODUCT_LIST_DATA = [
-  {
-    imageUrl:
-      "https://wowjewelry.com.vn/wp-content/uploads/2022/10/O-Nhan-Kim-Cuong-Dai-Hoa-WOW3-scaled-1-scaled.jpg",
-    title: "WOW Diamond Jewelry",
-    price: 1600,
-  },
-  {
-    imageUrl:
-      "https://wowjewelry.com.vn/wp-content/uploads/2022/10/O-Nhan-Kim-Cuong-Dai-Hoa-WOW3-scaled-1-scaled.jpg",
-    title: "WOW Diamond Jewelry",
-    price: 1560,
-  },
-  {
-    imageUrl:
-      "https://wowjewelry.com.vn/wp-content/uploads/2022/10/O-Nhan-Kim-Cuong-Dai-Hoa-WOW3-scaled-1-scaled.jpg",
-    title: "WOW Diamond Jewelry",
-    price: 2340,
-  },
-  {
-    imageUrl:
-      "https://wowjewelry.com.vn/wp-content/uploads/2022/10/O-Nhan-Kim-Cuong-Dai-Hoa-WOW3-scaled-1-scaled.jpg",
-    title: "WOW Diamond Jewelry",
-    price: 13460,
-  },
-  {
-    imageUrl:
-      "https://wowjewelry.com.vn/wp-content/uploads/2022/10/O-Nhan-Kim-Cuong-Dai-Hoa-WOW3-scaled-1-scaled.jpg",
-    title: "WOW Diamond Jewelry",
-    price: 12340,
-  },
-];
 
 const cardData = [
   {
@@ -95,8 +50,8 @@ const cardData = [
 ];
 
 type Category = {
-  id: number;
-  name: string;
+  categoryId: number;
+  categoryName: string;
 };
 
 type Product = {
@@ -133,13 +88,9 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
         return;
       }
 
-      // // Gọi API để lấy danh sách danh mục
-      // const categoryResponse = await axios.get<Category[]>('https://bfrsserver.azurewebsites.net/api/Categories', {
-      //   headers: {
-      //     Authorization: `Bearer ${token}`,
-      //   },
-      // });
-      // setCategories(categoryResponse.data);
+      // Fetch categories
+      const categoryResponse = await getCategory();
+      setCategories(categoryResponse);
 
       // Gọi API để lấy danh sách sản phẩm
       const productResponse = await axios.get('https://bfrsserver.azurewebsites.net/api/Products/allProductsAvaiable', {
@@ -164,7 +115,10 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
   useEffect(() => {
     fetchData();
   }, []);
-  
+
+  const filteredProducts = categoryIndex === 0
+    ? products
+    : products.filter(product => product.categoryId === categories[categoryIndex].categoryId);
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -250,7 +204,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
               entering={FadeInRight.delay(600).duration(1000).springify()}
               style={{ flexDirection: "row", alignItems: "center", gap: 15 }}
             >
-              {cardData.map((card, index) => (
+              {cardData.map((card) => (
                 <View key={card.id} style={{ width: 300 }}>
                   <Card
                     onPress={() =>
@@ -267,47 +221,6 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
         </View>
 
         {/* Categories Section */}
-        {/* <FlatList
-          data={CATEGORIES}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingHorizontal: 16,
-            gap: 12,
-          }}
-          renderItem={({ item, index }) => {
-            const isSelected = categoryIndex === index;
-            return (
-              <Animated.View
-                entering={FadeInUp.delay(600).duration(1000).springify()}
-              >
-                <TouchableOpacity
-                  onPress={() => setCategoryIndex(index)}
-                  style={{
-                    backgroundColor: isSelected ? colors.primary : colors.card,
-                    paddingHorizontal: 20,
-                    paddingVertical: 12,
-                    borderRadius: 100,
-                    borderWidth: isSelected ? 0 : 1,
-                    borderColor: colors.border,
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: isSelected ? colors.background : colors.text,
-                      fontWeight: "600",
-                      fontSize: 14,
-                      opacity: isSelected ? 1 : 0.5,
-                    }}
-                  >
-                    {item}
-                  </Text>
-                </TouchableOpacity>
-              </Animated.View>
-            );
-          }}
-        /> */}
-
         <FlatList
           data={categories}
           horizontal
@@ -341,18 +254,18 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
                       opacity: isSelected ? 1 : 0.5,
                     }}
                   >
-                    {item.name}
+                    {item.categoryName}
                   </Text>
                 </TouchableOpacity>
               </Animated.View>
             );
           }}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item.categoryId.toString()}
         />
 
         {/* Mesonary */}
         <MasonryList
-          data={products}
+          data={filteredProducts}
           numColumns={2}
           contentContainerStyle={{ paddingHorizontal: 12 }}
           showsVerticalScrollIndicator={false}
@@ -361,86 +274,86 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
               entering={FadeInDown.delay(600).duration(1000).springify()}
               style={{ padding: 6 }}
             >
-              <TouchableOpacity onPress={() => navigation.navigate("Details", { id: item.id }) }>
-              <View
-                style={{
-                  aspectRatio: i === 0 ? 1 : 2 / 3,
-                  position: "relative",
-                  overflow: "hidden",
-                  borderRadius: 24,
-                }}
-              >
-                <Image
-                  source={{
-                    uri: item.imageUrl,
-                  }}
-                  resizeMode="cover"
-                  style={StyleSheet.absoluteFill}
-                />
+              <TouchableOpacity onPress={() => navigation.navigate("Details", { id: item.id })}>
                 <View
-                  style={[
-                    StyleSheet.absoluteFill,
-                    {
-                      padding: 12,
-                    },
-                  ]}
+                  style={{
+                    aspectRatio: i === 0 ? 1 : 2 / 3,
+                    position: "relative",
+                    overflow: "hidden",
+                    borderRadius: 24,
+                  }}
                 >
-                  <View style={{ flexDirection: "row", gap: 8, padding: 4 }}>
-                    <Text
-                      style={{
-                        flex: 1,
-                        fontSize: 16,
-                        fontWeight: "600",
-                        color: "#000000",
-                        textShadowColor: "rgba(0,0,0,0.2)",
-                        textShadowOffset: {
-                          height: 1,
-                          width: 0,
-                        },
-                        textShadowRadius: 4,
-                      }}
-                    >
-                      {item.name}
-                    </Text>
-                  </View>
-                  <View style={{ flex: 1 }} />
-                  <BlurView
-                    style={{
-                      flexDirection: "row",
-                      backgroundColor: "rgba(0,0,0,0.5)",
-                      alignItems: "center",
-                      padding: 6,
-                      borderRadius: 100,
-                      overflow: "hidden",
+                  <Image
+                    source={{
+                      uri: item.imageUrl,
                     }}
-                    intensity={20}
+                    resizeMode="cover"
+                    style={StyleSheet.absoluteFill}
+                  />
+                  <View
+                    style={[
+                      StyleSheet.absoluteFill,
+                      {
+                        padding: 12,
+                      },
+                    ]}
                   >
-                    <Text
+                    <View style={{ flexDirection: "row", gap: 8, padding: 4 }}>
+                      <Text
+                        style={{
+                          flex: 1,
+                          fontSize: 16,
+                          fontWeight: "600",
+                          color: "#000000",
+                          textShadowColor: "rgba(0,0,0,0.2)",
+                          textShadowOffset: {
+                            height: 1,
+                            width: 0,
+                          },
+                          textShadowRadius: 4,
+                        }}
+                      >
+                        {item.name}
+                      </Text>
+                    </View>
+                    <View style={{ flex: 1 }} />
+                    <BlurView
                       style={{
-                        flex: 1,
-                        fontSize: 16,
-                        fontWeight: "600",
-                        color: "#000000",
-                        marginLeft: 0,
-                      }}
-                      numberOfLines={2}
-                    >
-                      {item.price.toLocaleString()} VND
-                    </Text>
-                    <TouchableOpacity
-                    onPress={()=> handleAddToCart(item)}
-                      style={{
-                        paddingHorizontal: 12,
-                        paddingVertical: 8,
+                        flexDirection: "row",
+                        backgroundColor: "rgba(0,0,0,0.5)",
+                        alignItems: "center",
+                        padding: 6,
                         borderRadius: 100,
-                        backgroundColor: "#fff",
+                        overflow: "hidden",
                       }}
+                      intensity={20}
                     >
-                      <Icons name="add-shopping-cart" size={18} color="#000" />
-                    </TouchableOpacity>
-                  </BlurView>
+                      <Text
+                        style={{
+                          flex: 1,
+                          fontSize: 16,
+                          fontWeight: "600",
+                          color: "#000000",
+                          marginLeft: 0,
+                        }}
+                        numberOfLines={2}
+                      >
+                        {item.price.toLocaleString()} VND
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() => handleAddToCart(item)}
+                        style={{
+                          paddingHorizontal: 12,
+                          paddingVertical: 8,
+                          borderRadius: 100,
+                          backgroundColor: "#fff",
+                        }}
+                      >
+                        <Icons name="add-shopping-cart" size={18} color="#000" />
+                      </TouchableOpacity>
+                    </BlurView>
+                  </View>
                 </View>
-              </View>
               </TouchableOpacity>
             </Animated.View>
           )}

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../navigators/RootNavigator';
+import { createCustomer } from '../api/api';
 
 type AddCustomerScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -22,18 +23,22 @@ const AddCustomerScreen: React.FC = () => {
       return;
     }
 
-    try {
-      await axios.post('http://10.87.15.48:3000/customers', {
-        name,
-        phone,
-        address,
-      });
 
-      Alert.alert('Success', 'Customer added successfully');
+    try {
+      const customer = {
+        name: name,
+        phone: phone,
+      };
+
+      const response = await createCustomer(customer);
+
+      Alert.alert('Success', 'Customer Created Successfully');
       navigation.navigate('CustomerList');
     } catch (error) {
-      Alert.alert('Error', 'Failed to add customer');
+      console.error(error);
+      Alert.alert('Error', 'An error occurred while creating customer');
     }
+
   };
 
   return (

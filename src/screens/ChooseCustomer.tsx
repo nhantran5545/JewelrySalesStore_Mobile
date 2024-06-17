@@ -32,7 +32,7 @@ const tierIcons: { [key: string]: JSX.Element } = {
   "Hạng Đồng": <MaterialIcons name="stars" size={24} color="#726b055b" />
 };
 
-const GuestCustomerScreen: React.FC = () => {
+const ChooseCustomer: React.FC = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -75,7 +75,7 @@ const GuestCustomerScreen: React.FC = () => {
   }, [navigation]);
 
   const handleCustomerSelect = (customer: Customer) => {
-    navigation.navigate('CreateInvoiceBuyBack', { customer });
+    navigation.navigate('CreateInvoiceBuyBackStore', { customer });
   };
 
   const handleSearch = (query: string) => {
@@ -188,4 +188,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GuestCustomerScreen;
+export default ChooseCustomer;

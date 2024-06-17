@@ -10,13 +10,21 @@ import { Feather } from '@expo/vector-icons';
 // Define Product type
 type Product = {
   id: string;
+  material: string;
+  materialId: string;
   productType: string;
   goldType?: string;
   goldGram?: string;
+  gram: string;
   diamondGram?: string;
   diamondType?: string;
   jewelryType?: string;
   price: number;
+  origin: string;
+  carat: number;
+  color: string;
+  clarity: string;
+  cut: string;
 };
 
 type ProductListScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'ProductList'>;
@@ -69,7 +77,7 @@ const ProductListScreen: React.FC = () => {
 
   const handleNext = () => {
     // alert('Chức năng chưa được thực hiện');
-    navigation.navigate('CreateInvoiceBuyBack');
+    navigation.navigate('GuestCustomer');
   };
 
   return (
@@ -80,19 +88,27 @@ const ProductListScreen: React.FC = () => {
         renderItem={({ item }) => (
           <View style={styles.productContainer}>
             <Text style={styles.productName}>Loại: {item.productType}</Text>
+            {item.material && (
+              <Text style={styles.productName}>Loại Vàng: {item.material}</Text>
+            )}
             <Text style={styles.productName}>Tên sản phẩm: {item.jewelryType}</Text>
-            {item.goldType && (
-              <Text style={styles.productPrice}>Loại Vàng: {item.goldType}</Text>
+            {item.gram && (
+              <Text style={styles.productDetail}>Gram: {item.gram} gram</Text>
             )}
-            {item.goldGram && (
-              <Text style={styles.productPrice}>Gold Gram: {item.goldGram ? `${item.goldGram} gram` : ''}</Text>
-
+            {item.carat && (
+              <Text style={styles.productDetail}>Carat: {item.carat} carat</Text>
             )}
-            {item.diamondType && (
-              <Text style={styles.productPrice}>Loại Kim Cương: {item.diamondType}</Text>
+            {item.origin && (
+              <Text style={styles.productDetail}>Origin: {item.origin}</Text>
             )}
-            {item.diamondGram && (
-              <Text style={styles.productPrice}>Diamond Gram: {item.diamondGram ? `${item.diamondGram} gram` : ''}</Text>
+            {item.color && (
+              <Text style={styles.productDetail}>Color: {item.color}</Text>
+            )}
+            {item.clarity && (
+              <Text style={styles.productDetail}>Clarity: {item.clarity}</Text>
+            )}
+            {item.cut && (
+              <Text style={styles.productDetail}>Cut: {item.cut}</Text>
             )}
             <Text style={styles.productPrice}>Giá: {item.price.toLocaleString()} VND</Text>
           </View>
@@ -110,33 +126,36 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#F5F5F5',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    backgroundColor: '#F0F0F5',
   },
   productContainer: {
     backgroundColor: '#FFFFFF',
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 12,
     marginVertical: 8,
     borderWidth: 1,
-    borderColor: '#000000',
+    borderColor: '#E0E0E0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   productName: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#333333',
+  },
+  productDetail: {
+    fontSize: 16,
+    color: '#666666',
+    marginTop: 4,
   },
   productPrice: {
-    fontSize: 16,
-    color: '#888888',
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FF6347',
+    marginTop: 8,
   },
   listContainer: {
     paddingBottom: 100,
@@ -147,13 +166,18 @@ const styles = StyleSheet.create({
     left: 16,
     right: 16,
     backgroundColor: '#FF6347',
-    paddingVertical: 12,
-    borderRadius: 8,
+    paddingVertical: 14,
+    borderRadius: 12,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
   },
   nextButtonText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   backButton: {
