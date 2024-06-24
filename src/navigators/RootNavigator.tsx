@@ -20,6 +20,7 @@ import CartBuyBackScreen from "../screens/CartBuyBackScreen";
 import OrderListPaidScreen from "../screens/OrderListPaidScreen";
 import ChooseCustomer from "../screens/ChooseCustomer";
 import CreateOrderBuyBackStoreScreen from "../screens/CreateOrderBuyBackStoreScreen";
+import LoginScreen from "../screens/LoginScreen";
 
 type Customer = {
   customerId: string;
@@ -54,6 +55,7 @@ export type RootStackParamList = {
   OrderListPaid: undefined;
   ChooseCustomer: undefined;
   CreateInvoiceBuyBackStore: { customer: Customer };
+  Login: undefined;
 };
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -67,6 +69,13 @@ const RootNavigator = () => {
       <RootStack.Screen
         name="TabsStack"
         component={TabsNavigator}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <RootStack.Screen
+        name="Login"
+        component={LoginScreen}  
         options={{
           headerShown: false,
         }}

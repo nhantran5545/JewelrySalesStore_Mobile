@@ -27,7 +27,7 @@ export const fetchCustomers = async () => {
   }
 };
 
-// Hàm gọi API lấy danh sách khách hàng
+// Hàm gọi API thông tin chi tiết sản phẩm
 export const fetchProductById = async (productId: string) => {
   try {
     const response = await api.get(`/Products/${productId}`);
@@ -50,10 +50,10 @@ export const createInvoice = async (invoiceData: any) => {
   }
 };
 
-// Hàm gọi API để lấy danh sách Order
+// Hàm gọi API để lấy danh sách Order trạng thái Paid
 export const GetOrderList = async () => {
   try {
-    const response = await api.get('/OrderSells/orderSellBySeller');
+    const response = await api.get('/OrderSells//orderSellByAccount');
     return response.data;
   } catch (error) {
     throw error;
@@ -164,7 +164,7 @@ export const calculateBuyBackPrice = async (productCode: string) => {
 //Hàm gọi API để lấy tất cả Order Detail
 export const GetAllOrderList = async () => {
   try {
-    const response = await api.get('/OrderSells');
+    const response = await api.get('/OrderSells/allOrderSellDelivered');
     return response.data;
   } catch (error) {
     throw error;
@@ -209,13 +209,15 @@ export const cancelOrder = async (orderSellId: number) => {
 // New function to get Processing orders
 export const GetProcessingOrderList = async () => {
   try {
-    const response = await api.get('/OrderSells/orderSellProcessingBySeller');
+    const response = await api.get('/OrderSells/orderSellProcessingByAccount');
     return response.data;
   } catch (error) {
     console.error('Error order Processing:', error);
     throw error;
   }
 };
+
+
 
 export default api;
 

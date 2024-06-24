@@ -12,13 +12,31 @@ export const getCartBuyBack = async () => {
   }
 };
 
+// export const addToCartBuyBack = async (product) => {
+//   try {
+//     const cart = await getCartBuyBack();
+//     const newCart = [...cart, product];
+//     await AsyncStorage.setItem(CART_KEY, JSON.stringify(newCart));
+//   } catch (error) {
+//     console.error('Failed to add to cart:', error);
+//   }
+// };
+
 export const addToCartBuyBack = async (product) => {
   try {
     const cart = await getCartBuyBack();
+    const isDuplicate = cart.some(item => item.productId === product.productId);
+
+    if (isDuplicate) {
+      return false; // Indicate that the product was not added
+    }
+
     const newCart = [...cart, product];
     await AsyncStorage.setItem(CART_KEY, JSON.stringify(newCart));
+    return true; // Indicate that the product was added successfully
   } catch (error) {
     console.error('Failed to add to cart:', error);
+    return false; // Indicate that there was an error adding the product
   }
 };
 

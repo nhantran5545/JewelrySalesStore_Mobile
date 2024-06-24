@@ -18,9 +18,11 @@ import PrimaryButton from "../components/PrimaryButton";
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { clearCart } from "../utils/cartUtil";
+import { useNavigation } from "@react-navigation/native";
+import { NavigationProp, ParamListBase } from "@react-navigation/native";
 
 interface LoginScreenProps {
-  onLogin: () => void; // Callback function to handle successful login
+  onLogin?: () => void; // Callback function to handle successful login, made optional
 }
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
@@ -29,14 +31,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
   const theme = useTheme();
   const dimensions = useWindowDimensions();
   const [secureEntery, setSecureEntery] = useState(true);
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
+  
 
-  // const handleLogin = () => {
-  //   // Mock login logic - replace this with actual authentication
-  //   if (username === "staff" && password === "password") {
-  //     onLogin(); // Call the onLogin callback if login is successful
-  //   } else {
-  //     alert("Invalid credentials");
-  //   }
   const handleLogin = async () => {
     try {
       const response = await axios.post('https://bfrsserver.azurewebsites.net/api/Accounts/login', {
@@ -44,19 +41,25 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
         password
       });
 
-      // clearCart();
+      clearCart();
       
       const { token, account } = response.data;
       
       if (account.role === 'Seller') {
         await AsyncStorage.setItem('token', token);
-        onLogin(); // Call the onLogin callback if login is successful
+        await AsyncStorage.setItem('account', JSON.stringify(account));
+        // onLogin(); // Call the onLogin callback if login is successful
+        if (onLogin) {
+          onLogin(); // Call the onLogin callback if provided
+        } else {
+          navigation.navigate('TabsStack', { screen: 'Home' });
+        }
       } else {
-        alert("Invalid credentials");
+        alert("Bạn không phải Seller");
       }
     } catch (error) {
       console.error(error);
-      alert("Invalid credentials");
+      alert("Sai tài khoản hoặc mật khẩu");
     }
   };
 
@@ -147,7 +150,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
               }}
             >
               <TextInput
-                placeholder="Mật Khảu"
+                placeholder="Mật Khẩu"
                 style={{
                   fontSize: 16,
                   fontWeight: "500",

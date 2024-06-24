@@ -7,7 +7,7 @@ import { RootStackScreenProps } from '../navigators/RootNavigator';
 import { Fontisto } from '@expo/vector-icons';
 
 type Product = {
-  id: string;
+  productId: string;
   name: string;
   description: string;
   price: number;
@@ -26,7 +26,7 @@ const CartScreen: React.FC = () => {
   const { colors } = useTheme();
   const navigation = useNavigation<RootStackScreenProps<'Cart'>['navigation']>();
 
-  useFocusEffect( // Using useFocusEffect to fetch cart items whenever the screen is focused
+  useFocusEffect(
     useCallback(() => {
       const fetchCartItems = async () => {
         const items = await getCart();
@@ -38,19 +38,19 @@ const CartScreen: React.FC = () => {
   );
 
   const renderItem = ({ item }: { item: Product }) => (
-    <View style={styles.card}>
+    <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('Details', { id: item.productId })}>
       <Image source={{ uri: item.imageUrl }} style={styles.image} />
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{item.name}</Text>
         <Text style={styles.price}>{item.price.toLocaleString()} VND</Text>
         <Text style={styles.quantity}>Số Lượng: {item.quantity}</Text>
       </View>
-      <TouchableOpacity onPress={() => handleRemoveFromCart(item.id)} style={styles.removeButton}>
+      <TouchableOpacity onPress={() => handleRemoveFromCart(item.productId)} style={styles.removeButton}>
         <Text style={styles.removeButtonText}>
           <Feather name="trash-2" size={24} color="white" />
         </Text>
       </TouchableOpacity>
-    </View>
+    </TouchableOpacity>
   );
 
   const handleRemoveFromCart = (productId: string) => {
@@ -67,7 +67,7 @@ const CartScreen: React.FC = () => {
           text: 'Xóa',
           onPress: async () => {
             await removeFromCart(productId); // Call removeFromCart function
-            const updatedCartItems = cartItems.filter(item => item.id !== productId);
+            const updatedCartItems = cartItems.filter(item => item.productId !== productId);
             setCartItems(updatedCartItems);
           },
         },
@@ -92,7 +92,7 @@ const CartScreen: React.FC = () => {
           <FlatList
             data={cartItems}
             renderItem={renderItem}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.productId}
             contentContainerStyle={styles.listContainer}
           />
           <View style={styles.footer}>
@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   name: {
+    width: 140,
     fontSize: 16,
     fontWeight: 'bold',
   },

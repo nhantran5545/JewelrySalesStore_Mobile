@@ -45,7 +45,7 @@ const SearchBar = () => {
           />
         </View>
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={openFilterModal}
           style={{
             width: 52,
@@ -57,7 +57,7 @@ const SearchBar = () => {
           }}
         >
           <Icons name="tune" size={24} color={colors.background} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       <BottomSheetModal
         snapPoints={["85%"]}

@@ -25,6 +25,7 @@ type Product = {
   color: string;
   clarity: string;
   cut: string;
+  chiVang: string;
 };
 
 type ProductListScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'ProductList'>;
@@ -94,6 +95,9 @@ const ProductListScreen: React.FC = () => {
             <Text style={styles.productName}>Tên sản phẩm: {item.jewelryType}</Text>
             {item.gram && (
               <Text style={styles.productDetail}>Gram: {item.gram} gram</Text>
+            )}
+            {item.chiVang && (
+              <Text style={styles.productDetail}>Chỉ Vàng: {item.chiVang} Chỉ</Text>
             )}
             {item.carat && (
               <Text style={styles.productDetail}>Carat: {item.carat} carat</Text>

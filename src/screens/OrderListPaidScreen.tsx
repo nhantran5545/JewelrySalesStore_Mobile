@@ -156,6 +156,7 @@ const OrderListPaidScreen: React.FC = () => {
                 </TouchableOpacity>
               )}
             </View>
+            
           </View>
         )}
       />

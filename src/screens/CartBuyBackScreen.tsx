@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useTheme, useFocusEffect, useNavigation } from "@react-navigation/native";
-import { Feather } from '@expo/vector-icons';
+import { Feather, Fontisto } from '@expo/vector-icons';
 import { RootStackScreenProps } from '../navigators/RootNavigator';
-import { Fontisto } from '@expo/vector-icons';
-import { getCartBuyBack, removeFromCartBuyBack } from '../utils/cartBuyBack';
-import { calculateBuyBackPrice } from '../api/api';
+import { getCartBuyBack, removeFromCartBuyBack, clearCartBuyBack } from '../utils/cartBuyBack';
+import { fetchProductById } from '../api/api';
 
 type Product = {
   productId: string;
@@ -16,6 +15,10 @@ type Product = {
   productCode: string;
   material: string;
   quantity: number;
+  productPrice?: number;
+  buyBackPrice?: number;
+  discountRate?: number;
+  finalBuyBackPrice: number;
 };
 
 const CartBuyBackScreen: React.FC = () => {
@@ -28,8 +31,28 @@ const CartBuyBackScreen: React.FC = () => {
       const fetchCartItems = async () => {
         const items = await getCartBuyBack();
         const updatedItems = await Promise.all(items.map(async (item: Product) => {
-          const price = await calculateBuyBackPrice(item.productId);
-          return { ...item, price };
+          try {
+            const details = await fetchProductById(item.productId);
+            const productPrice = details.productPrice;
+            const buyBackPrice = details.buyBackPrice;
+            const discountRate = details.discountRate;
+
+            // Calculate the final buy-back price
+            const priceDifference = productPrice - buyBackPrice;
+            const discountAmount = (priceDifference * discountRate) / 100;
+            const finalBuyBackPrice = buyBackPrice + discountAmount;
+
+            return {
+              ...item,
+              productPrice,
+              buyBackPrice,
+              discountRate,
+              finalBuyBackPrice,
+            };
+          } catch (error) {
+            console.error(`Failed to fetch details for product ${item.productId}`, error);
+            return item;
+          }
         }));
         setCartBuyBackItems(updatedItems);
       };
@@ -61,25 +84,50 @@ const CartBuyBackScreen: React.FC = () => {
     );
   };
 
+  const handleClearCart = async () => {
+    Alert.alert(
+      'Xóa tất cả sản phẩm',
+      'Bạn có chắc muốn xóa tất cả sản phẩm khỏi giỏ hàng?',
+      [
+        {
+          text: 'Hủy',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: 'Xóa Tất Cả',
+          onPress: async () => {
+            await clearCartBuyBack();
+            setCartBuyBackItems([]);
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
   const renderItem = ({ item }: { item: Product }) => (
-    <View style={styles.card}>
-      <Image source={{ uri: item.productImage }} style={styles.image} />
-      <View style={styles.infoContainer}>
-        <Text style={styles.name}>{item.productName}</Text>
-        <Text style={styles.productId}>{item.productId}</Text>
-        <Text style={styles.price}>{item.price.toLocaleString()} VND</Text>
-        <Text style={styles.quantity}>Số Lượng: {item.quantity}</Text>
-      </View>
-      <TouchableOpacity onPress={() => handleRemoveFromCart(item.productId)} style={styles.removeButton}>
-        <Text style={styles.removeButtonText}>
-          <Feather name="trash-2" size={24} color="white" />
-        </Text>
+      <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("Details", {id: item.productId})}>
+        <Image source={{ uri: item.productImage }} style={styles.image} />
+        <View style={styles.infoContainer}>
+          <Text style={styles.name}>{item.productName}</Text>
+          <Text style={styles.productId}>{item.productId}</Text>
+          <Text style={styles.price}>Giá đơn hàng: {item.price.toLocaleString()} VND</Text>
+          <Text style={styles.price}>Giá mua lại: {item.buyBackPrice?.toLocaleString()} VND</Text>
+          <Text style={styles.price}>Chiết khấu: {item.discountRate}%</Text>
+          <Text style={styles.price}>Giá: {item.finalBuyBackPrice?.toLocaleString()} VND</Text>
+          <Text style={styles.quantity}>Số Lượng: {item.quantity}</Text>
+        </View>
+        <TouchableOpacity onPress={() => handleRemoveFromCart(item.productId)} style={styles.removeButton}>
+          <Text style={styles.removeButtonText}>
+            <Feather name="trash-2" size={24} color="white" />
+          </Text>
+        </TouchableOpacity>
       </TouchableOpacity>
-    </View>
   );
 
   const getTotalPrice = () => {
-    return cartBuyBackItems.reduce((total, item) => total + item.price * item.quantity, 0).toLocaleString();
+    return cartBuyBackItems.reduce((total, item) => total + item.finalBuyBackPrice * item.quantity, 0).toLocaleString();
   };
 
   return (
@@ -99,9 +147,14 @@ const CartBuyBackScreen: React.FC = () => {
           />
           <View style={styles.footer}>
             <Text style={styles.totalPrice}>Tổng Giá: {getTotalPrice()} VND</Text>
-            <TouchableOpacity style={styles.checkoutButton} onPress={() => navigation.navigate("ChooseCustomer")}>
-              <Text style={styles.checkoutButtonText}>Bước Tiếp Theo</Text>
-            </TouchableOpacity>
+            <View style={styles.footerButtons}>
+              <TouchableOpacity style={styles.clearButton} onPress={handleClearCart}>
+                <Text style={styles.clearButtonText}>Xóa Tất Cả</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.checkoutButton} onPress={() => navigation.navigate("ChooseCustomer")}>
+                <Text style={styles.checkoutButtonText}>Bước Tiếp Theo</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </>
       )}
@@ -139,6 +192,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   name: {
+    width: 140,
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -147,6 +201,7 @@ const styles = StyleSheet.create({
     color: '#888888',
   },
   price: {
+    width: 220,
     fontSize: 16,
     color: '#888888',
   },
@@ -175,6 +230,10 @@ const styles = StyleSheet.create({
     borderColor: '#E0E0E0',
     backgroundColor: '#FFFFFF',
   },
+  footerButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
   totalPrice: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -185,8 +244,22 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: 'center',
+    flex: 1,
+    marginLeft: 8,
   },
   checkoutButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  clearButton: {
+    backgroundColor: '#FF6347',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    flex: 1,
+  },
+  clearButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',

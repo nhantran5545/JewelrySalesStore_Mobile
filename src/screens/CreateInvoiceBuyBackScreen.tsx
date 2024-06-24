@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native';
-// import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FontAwesome, Fontisto, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
+import { RouteProp, useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigators/RootNavigator';
-import { RouteProp, useNavigation } from '@react-navigation/native';
-import { useRoute } from '@react-navigation/native';
 import { createBuyBackInvoice } from '../api/api';
+import { useRoute } from '@react-navigation/native';
 
 type CreateInvoiceBuyBackScreenRouteProp = RouteProp<RootStackParamList, 'CreateInvoice'>;
 
@@ -25,18 +24,13 @@ interface CartItem {
   cut: string;
   material: string;
   origin: string;
+  chiVang: string;
 }
-
-const tierIcons: { [key: string]: JSX.Element } = {
-  "Hạng Kim Cương": <FontAwesome name="diamond" size={24} color="#16a0bc" />,
-  "Hạng Bạc": <MaterialIcons name="stars" size={24} color="#ada7a7" />,
-  "Hạng Vàng": <MaterialIcons name="stars" size={24} color="#fcf302" />,
-  "Hạng Đồng": <MaterialIcons name="stars" size={24} color="#726b055b" />
-};
 
 const CreateInvoiceBuyBackScreen: React.FC = () => {
   const route = useRoute<CreateInvoiceBuyBackScreenRouteProp>();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  // const navigation = useNavigation();
   const customer = route.params.customer;
   const [products, setProducts] = useState<CartItem[]>([]);
 
@@ -45,7 +39,6 @@ const CreateInvoiceBuyBackScreen: React.FC = () => {
       const storedProducts = await AsyncStorage.getItem('products');
       if (storedProducts) {
         setProducts(JSON.parse(storedProducts));
-        console.log(products);
       }
     };
 
@@ -67,34 +60,55 @@ const CreateInvoiceBuyBackScreen: React.FC = () => {
     };
   };
 
-  const renderCartItem = ({ item }: { item: CartItem }) => (
-    <View style={styles.cartItem}>
-      <View style={styles.itemInfo}>
-        <Text style={styles.itemName}>Loại: {item.productType}</Text>
-        <Text style={styles.itemName}>Tên sản phẩm: {item.jewelryType}</Text>
-        {item.material && (
-          <Text style={styles.productDetail}>Loại Vàng: {item.material}</Text>
-        )}
-        <Text style={styles.productDetail}>{item.materialId}</Text>
-        {item.gram && (
-          <Text style={styles.productDetail}>Gram: {item.gram} gram</Text>
-        )}
-        <Text style={styles.itemPrice}>Giá: {item.price.toLocaleString()} VND</Text>
+  const renderCartItem = ({ item }: { item: CartItem }) => {
+    const gramFromChiVang = item.chiVang ? (parseFloat(item.chiVang) * 3.75).toFixed(2) : item.gram.toString();
+    return (
+      <View style={styles.cartItem}>
+        <View style={styles.itemInfo}>
+          <Text style={styles.itemName}>Loại: {item.productType}</Text>
+          <Text style={styles.itemName}>Tên sản phẩm: {item.jewelryType}</Text>
+          {item.material && (
+            <Text style={styles.productDetail}>Loại Vàng: {item.material}</Text>
+          )}
+          {item.chiVang && (
+            <Text style={styles.productDetail}>Chỉ Vàng: {item.chiVang} chỉ (≈ {gramFromChiVang} gram)</Text>
+          )}
+          {!item.chiVang && item.gram && (
+            <Text style={styles.productDetail}>Gram: {item.gram} gram</Text>
+          )}
+          {item.carat && (
+            <Text style={styles.productDetail}>Carat: {item.carat} carat</Text>
+          )}
+          {item.origin && (
+            <Text style={styles.productDetail}>Origin: {item.origin}</Text>
+          )}
+          {item.color && (
+            <Text style={styles.productDetail}>Color: {item.color}</Text>
+          )}
+          {item.clarity && (
+            <Text style={styles.productDetail}>Clarity: {item.clarity}</Text>
+          )}
+          {item.cut && (
+            <Text style={styles.productDetail}>Cut: {item.cut}</Text>
+          )}
+          <Text style={styles.itemPrice}>Giá: {item.price.toLocaleString()} VND</Text>
+        </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   const handleCreateInvoice = async () => {
     try {
       const buyBackDetails = products.map(product => ({
+        buyBackProductName: product.jewelryType,
         materialId: product.materialId || null,
-        quantity: 1 || null,
-        weight: product.gram || null,
+        quantity: 1,
+        weight: product.chiVang ? parseFloat(product.chiVang) * 3.75 : product.gram || null,
         origin: product.origin || '',
         caratWeight: product.carat || 0,
         color: product.color || '',
         clarity: product.clarity || '',
-        cut: product.cut || ''
+        cut: product.cut || '',
       }));
 
       const invoiceData = {
@@ -108,6 +122,9 @@ const CreateInvoiceBuyBackScreen: React.FC = () => {
 
       if (response) {
         Alert.alert('Success', 'Buyback Invoice Created Successfully');
+        await AsyncStorage.removeItem('products');
+        navigation.navigate('TabsStack', { screen: 'Home' });
+        // navigation.goBack();
       } else {
         Alert.alert('Error', 'Failed to create buyback invoice');
       }
@@ -226,10 +243,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     flexShrink: 1,
   },
-  itemQuantity: {
-    fontSize: 16,
-    marginLeft: 10,
-  },
   cartContainer: {
     height: 350,
     marginBottom: 15,
@@ -248,8 +261,7 @@ const styles = StyleSheet.create({
   promotionContainer: {
     position: 'absolute',
     bottom: 0,
-    left: 0,
-    right: 0,
+    width: '100%',
     padding: 16,
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
@@ -260,67 +272,44 @@ const styles = StyleSheet.create({
   },
   promotionInfo: {
     flex: 1,
-    paddingRight: 10,
-  },
-  promotion: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
-    color: '#FF6347'
-  },
-  finalPrice: {
-    textAlign: 'left',
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: "#FF6347",
-    marginBottom: 5,
+    marginRight: 16,
   },
   button: {
     backgroundColor: '#FF6347',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 5,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
   },
   buttonText: {
+    fontSize: 18,
     color: '#FFFFFF',
-    fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
   },
   cartItem: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 10,
-    backgroundColor: '#FFFFFF',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: '#FFF',
     borderRadius: 8,
-    marginBottom: 8,
-    borderWidth: 1,
     borderColor: '#ddd',
+    borderWidth: 1,
+    marginBottom: 8,
   },
   itemName: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  itemDetail: {
-    fontSize: 16,
-    color: '#666',
+    marginBottom: 4,
   },
   itemPrice: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#FF6347'
+    marginTop: 8,
+    color: '#333',
   },
   listContainer: {
     paddingBottom: 16,
-  },
-  discount: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
-    color: '#FF6347'
-  },
+  }
 });
 
 export default CreateInvoiceBuyBackScreen;

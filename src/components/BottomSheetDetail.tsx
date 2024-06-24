@@ -1,17 +1,10 @@
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
-import React, { useRef, useState } from "react";
-import { RootStackScreenProps } from "../navigators/RootNavigator";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState } from "react";
 import { useTheme } from "@react-navigation/native";
 import Icons from "@expo/vector-icons/MaterialIcons";
-import { StatusBar } from "expo-status-bar";
 import BottomSheet from "@gorhom/bottom-sheet";
-import { addToCart } from "../utils/cartUtil";
 
-// Định nghĩa kiểu dữ liệu Product (nếu chưa được định nghĩa ở đây)
+// Define the Product type if not already defined
 type Product = {
   productId: string;
   productName: string;
@@ -29,22 +22,18 @@ type Product = {
   status: string;
 };
 
-// Định nghĩa kiểu props cho BottomSheetDetail
+// Define the BottomSheetDetailProps interface
 interface BottomSheetDetailProps {
   product: Product;
 }
 
-// const SIZES = ["5", "5.5", "6", "7.5", "8", "8.5", "9", "9.5", "10", "10.5"];
-
 const BottomSheetDetail = ({ product }: BottomSheetDetailProps) => {
   const { colors } = useTheme();
-  const insets = useSafeAreaInsets();
   const [count, setCount] = useState(1);
-  // const [size, setSize] = useState(SIZES[0]);
 
   const handleAddToCart = async () => {
-    await addToCart(product);
-    alert('Sản Phẩm đã thêm vào giỏ hàng');
+    // await addToCart(product);
+    // alert('Sản Phẩm đã thêm vào giỏ hàng');
   };
 
   return (
@@ -53,7 +42,6 @@ const BottomSheetDetail = ({ product }: BottomSheetDetailProps) => {
       snapPoints={[64, 500]}
       index={0}
       style={{ marginHorizontal: 20 }}
-      bottomInset={insets.bottom + 20}
       backgroundStyle={{
         borderRadius: 24,
         backgroundColor: colors.background,
@@ -66,189 +54,58 @@ const BottomSheetDetail = ({ product }: BottomSheetDetailProps) => {
         <Text style={{ fontSize: 20, fontWeight: "600", color: colors.text }}>
           {product.productName}
         </Text>
-        {/* <View>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Text style={{ color: colors.text, opacity: 0.5 }}>Size</Text>
-          </View>
-
-          <View
-            style={{
-              flexDirection: "row",
-              flexWrap: "wrap",
-              gap: 6,
-              marginTop: 6,
-            }}
-          >
-            {SIZES.map((s, i) => (
-              <TouchableOpacity
-                key={i}
-                onPress={() => setSize(s)}
-                style={{
-                  width: 44,
-                  height: 44,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  backgroundColor: s === size ? colors.primary : colors.card,
-                  borderRadius: 44,
-                }}
-              >
-                <Text
-                  style={{
-                    color: s === size ? colors.card : colors.text,
-                    fontWeight: "600",
-                    fontSize: 16,
-                  }}
-                >
-                  {s}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View> */}
-
         <View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "600",
-                color: colors.text,
-              }}
-            >
+            <Text style={{ fontSize: 16, fontWeight: "600", color: colors.text }}>
               Mã sản phẩm:
             </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "400",
-                color: colors.text,
-                opacity: 0.75,
-                marginLeft: 8,
-              }}
-            >
+            <Text style={{ fontSize: 16, fontWeight: "400", color: colors.text, opacity: 0.75, marginLeft: 8 }}>
               {product.productId}
             </Text>
           </View>
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: "600",
-              marginBottom: 6,
-              color: colors.text,
-            }}
-          >
+          <Text style={{ fontSize: 16, fontWeight: "600", marginBottom: 6, color: colors.text }}>
             Kích thước:
           </Text>
-          <Text style={{ color: colors.text, opacity: 0.75, marginBottom: 6, fontSize: 20 }} numberOfLines={7}>
+          <Text style={{ color: 'white', paddingLeft: 5, marginBottom: 6, fontSize: 20, backgroundColor: 'black' }} numberOfLines={7}>
             {product.size}
           </Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "600",
-                color: colors.text,
-              }}
-            >
+            <Text style={{ fontSize: 16, fontWeight: "600", color: colors.text }}>
               Loại:
             </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "400",
-                color: colors.text,
-                opacity: 0.75,
-                marginLeft: 8,
-              }}
-            >
+            <Text style={{ fontSize: 16, fontWeight: "400", color: colors.text, opacity: 0.75, marginLeft: 8 }}>
               {product.categoryName}
             </Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "600",
-                color: colors.text,
-              }}
-            >
+            <Text style={{ fontSize: 16, fontWeight: "600", color: colors.text }}>
               Giá sản xuất:
             </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "400",
-                color: colors.text,
-                opacity: 0.75,
-                marginLeft: 8,
-              }}
-            >
-              {product.productionCost.toLocaleString()} VND
+            <Text style={{ fontSize: 16, fontWeight: "400", color: colors.text, opacity: 0.75, marginLeft: 8 }}>
+              {product.productionCost ? product.productionCost.toLocaleString() : 'N/A'} VND
             </Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "600",
-                color: colors.text,
-              }}
-            >
+            <Text style={{ fontSize: 16, fontWeight: "600", color: colors.text }}>
               Giá vật liệu:
             </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "400",
-                color: colors.text,
-                opacity: 0.75,
-                marginLeft: 8,
-              }}
-            >
-              {product.materialCost.toLocaleString()} VND
+            <Text style={{ fontSize: 16, fontWeight: "400", color: colors.text, opacity: 0.75, marginLeft: 8 }}>
+              {product.materialCost ? product.materialCost.toLocaleString() : 'N/A'} VND
             </Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "600",
-                color: colors.text,
-              }}
-            >
-              Giá kim cương :
+            <Text style={{ fontSize: 16, fontWeight: "600", color: colors.text }}>
+              Giá kim cương:
             </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "400",
-                color: colors.text,
-                opacity: 0.75,
-                marginLeft: 8,
-              }}
-            >
-              {product.diamondCost.toLocaleString()} VND
+            <Text style={{ fontSize: 16, fontWeight: "400", color: colors.text, opacity: 0.75, marginLeft: 8 }}>
+              {product.diamondCost ? product.diamondCost.toLocaleString() : 'N/A'} VND
             </Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "600",
-                color: colors.text,
-              }}
-            >
+            <Text style={{ fontSize: 16, fontWeight: "600", color: colors.text }}>
               Trạng thái:
             </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "400",
-                color: colors.text,
-                opacity: 0.75,
-                marginLeft: 8,
-              }}
-            >
+            <Text style={{ fontSize: 16, fontWeight: "400", color: colors.text, opacity: 0.75, marginLeft: 8 }}>
               {product.status}
             </Text>
           </View>
@@ -257,15 +114,11 @@ const BottomSheetDetail = ({ product }: BottomSheetDetailProps) => {
         <View style={{ flex: 1 }} />
         <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
           <View style={{ flex: 1 }}>
-            <Text
-              style={{ color: colors.text, opacity: 0.75, marginBottom: 4 }}
-            >
+            <Text style={{ color: colors.text, opacity: 0.75, marginBottom: 4 }}>
               Giá
             </Text>
-            <Text
-              style={{ color: '#A2765B', fontSize: 18, fontWeight: "600" }}
-            >
-              {product.productPrice.toLocaleString()} VND
+            <Text style={{ color: '#A2765B', fontSize: 18, fontWeight: "600", width: 400 }}>
+              {product.productPrice ? product.productPrice.toLocaleString() : 'N/A'} VND
             </Text>
           </View>
 
@@ -282,26 +135,10 @@ const BottomSheetDetail = ({ product }: BottomSheetDetailProps) => {
               padding: 12,
             }}
           >
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "600",
-                color: colors.background,
-                paddingHorizontal: 16,
-              }}
-            >
+            <Text style={{ fontSize: 16, fontWeight: "600", color: colors.background, paddingHorizontal: 8 }}>
               Add to cart
             </Text>
-            <View
-              style={{
-                backgroundColor: colors.card,
-                width: 40,
-                aspectRatio: 1,
-                borderRadius: 40,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
+            <View style={{ backgroundColor: colors.card, width: 30, aspectRatio: 1, borderRadius: 40, alignItems: "center", justifyContent: "center" }}>
               <Icons name="arrow-forward" size={24} color={colors.text} />
             </View>
           </TouchableOpacity>
@@ -310,4 +147,5 @@ const BottomSheetDetail = ({ product }: BottomSheetDetailProps) => {
     </BottomSheet>
   );
 };
+
 export default BottomSheetDetail;

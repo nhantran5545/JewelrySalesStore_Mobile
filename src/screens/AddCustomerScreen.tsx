@@ -15,14 +15,12 @@ const AddCustomerScreen: React.FC = () => {
   const navigation = useNavigation<AddCustomerScreenNavigationProp>();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [address, setAddress] = useState('');
 
   const handleAddCustomer = async () => {
-    if (!name || !phone || !address) {
+    if (!name || !phone) {
       Alert.alert('Cảnh báo', 'Nhập thiếu nội dung');
       return;
     }
-
 
     try {
       const customer = {
@@ -38,7 +36,10 @@ const AddCustomerScreen: React.FC = () => {
       console.error(error);
       Alert.alert('Error', 'An error occurred while creating customer');
     }
+  };
 
+  const handleCancel = () => {
+    navigation.goBack();
   };
 
   return (
@@ -57,15 +58,14 @@ const AddCustomerScreen: React.FC = () => {
         onChangeText={setPhone}
         keyboardType="phone-pad"
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Địa chỉ"
-        value={address}
-        onChangeText={setAddress}
-      />
-      <TouchableOpacity style={styles.button} onPress={handleAddCustomer}>
-        <Text style={styles.buttonText}>Thêm khách hàng</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={handleCancel}>
+          <Text style={styles.buttonText}>Hủy</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleAddCustomer}>
+          <Text style={styles.buttonText}>Thêm khách hàng</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -95,11 +95,22 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 5 },
     elevation: 3,
   },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
   button: {
     backgroundColor: '#FF6347',
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: 'center',
+    flex: 1,
+    marginLeft: 8,
+  },
+  cancelButton: {
+    backgroundColor: '#888888',
+    marginLeft: 0,
+    marginRight: 8,
   },
   buttonText: {
     color: '#FFFFFF',

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface MenuProps {
   navigation: NavigationProp<ParamListBase>;
@@ -18,6 +19,16 @@ const Menu: React.FC<MenuProps> = ({ navigation }) => {
 
   const goToCartBuyBack = () => {
     navigation.navigate('CartBuyBack');
+  };
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('token');
+      await AsyncStorage.removeItem('account');
+      navigation.navigate('Login');
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
   };
 
   return (
@@ -47,6 +58,9 @@ const Menu: React.FC<MenuProps> = ({ navigation }) => {
           </View>
           <Text style={styles.menuText}>Giỏ Hàng Mua Lại</Text>
         </View>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+        <Text style={styles.logoutButtonText}>Log Out</Text>
       </TouchableOpacity>
     </View>
   );
@@ -82,6 +96,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
+  },
+  logoutButton: {
+    backgroundColor: 'gray',
+    padding: 15,
+    borderRadius: 4,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  logoutButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
 

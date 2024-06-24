@@ -6,10 +6,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
+  Alert
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@react-navigation/native";
+import { useTheme, useFocusEffect } from "@react-navigation/native";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import MasonryList from "reanimated-masonry-list";
 import { BlurView } from "expo-blur";
@@ -24,9 +25,11 @@ import axios from "axios";
 import { addToCart } from "../utils/cartUtil";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getCategory } from "../api/api";
+import SearchCustomer from "../components/SearchCustomer";
+import SearchProduct from "../components/SearchProduct";
 
 const AVATAR_URL =
-  "https://scontent.fhan3-4.fna.fbcdn.net/v/t39.30808-6/397531770_1051616996022156_3370330046834720504_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeFMgvmDcTnhB5nozzUYqFv2AsodDh6apGcCyh0OHpqkZ5rSl-UPHnmjOQXyYyo-UWUvJ8_DdTvhH8b-LrF4mnde&_nc_ohc=E94nY0B2DjAQ7kNvgGnx0Ph&_nc_pt=1&_nc_ht=scontent.fhan3-4.fna&oh=00_AYBHugshxYM2-DEVYGfArotHK34E6HorRZe2dViseiriug&oe=664BE649";
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzwyqpjAmQf9cJZJYedogG6ivGM_FAyiIOwQ&s";
 
 const cardData = [
   {
@@ -55,7 +58,7 @@ type Category = {
 };
 
 type Product = {
-  id: number;
+  productId: string;
   name: string;
   price: number;
   imageUrl: string;
@@ -65,65 +68,40 @@ type Product = {
 
 const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
   const { colors } = useTheme();
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<Category[]>([{ categoryId: 0, categoryName: 'All' }]);
   const [products, setProducts] = useState<Product[]>([]);
   const [categoryIndex, setCategoryIndex] = useState(0);
+  const [account, setAccount] = useState<{ firstName: string; lastName: string } | null>(null);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
-  const handleAddToCart = async (product: Product) => {
-    try {
-      await addToCart(product); // Gọi API để thêm sản phẩm vào giỏ hàng
-      alert('Sản Phẩm đã thêm vào giỏ hàng');
-    } catch (error) {
-      console.error('Failed to add product to cart:', error);
-      alert('Lỗi khi thêm sản phẩm vào giỏ hàng');
-    }
-  };
-
-  const fetchData = async () => {
-    try {
-      const token = await AsyncStorage.getItem('token');
-      console.log(token);
-      if (!token) {
-        console.error('No token found');
-        return;
-      }
-
-      // Fetch categories
-      const categoryResponse = await getCategory();
-      setCategories(categoryResponse);
-
-      // Gọi API để lấy danh sách sản phẩm
-      const productResponse = await axios.get('https://bfrsserver.azurewebsites.net/api/Products/allProductsAvaiable', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const fetchedProducts = productResponse.data.map((product: any) => ({
-        id: product.productId,
-        name: product.productName,
-        price: product.productPrice,
-        imageUrl: product.img,
-        categoryId: product.categoryId,
-        quantity: product.quantity,
-      }));
-      setProducts(fetchedProducts);
-    } catch (error) {
-      console.error('Error fetching data:', error);
+  const handleAddToCart = async (product: any) => {
+    const success = await addToCart(product);
+    if (success) {
+      Alert.alert('Thêm vào giỏ hàng', `Sản phẩm đã được thêm vào giỏ hàng.`);
+    } else {
+      Alert.alert('Sản phẩm đã tồn tại', 'Sản phẩm này đã có trong giỏ hàng.');
     }
   };
 
   useEffect(() => {
-    fetchData();
+    const fetchAccount = async () => {
+      try {
+        const accountData = await AsyncStorage.getItem('account');
+        if (accountData) {
+          const parsedAccount = JSON.parse(accountData);
+          setAccount(parsedAccount);
+        }
+      } catch (error) {
+        console.error('Error fetching account data:', error);
+      }
+    };
+
+    fetchAccount();
   }, []);
 
-  const filteredProducts = categoryIndex === 0
-    ? products
-    : products.filter(product => product.categoryId === categories[categoryIndex].categoryId);
-
-  return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <SafeAreaView style={{ paddingVertical: 24, gap: 24 }}>
-        {/* Header Section */}
+  const renderGreeting = () => {
+    if (account) {
+      return (
         <Animated.View
           entering={FadeInDown.delay(600).duration(1000).springify()}
           style={{
@@ -150,7 +128,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
               }}
               numberOfLines={1}
             >
-              Hi, Nhan 👋
+              {`Hello, ${account.lastName}`} 👋
             </Text>
             <Text
               style={{ color: colors.text, opacity: 0.75 }}
@@ -173,8 +151,78 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
             <Icons name="notifications" size={24} color={colors.text} />
           </TouchableOpacity>
         </Animated.View>
+      );
+    }
+    return null; // Return null if account is not yet fetched or is null
+  };
+
+  const fetchData = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      // console.log(token);
+      if (!token) {
+        console.error('No token found');
+        return;
+      }
+
+      // Fetch categories
+      const categoryResponse = await getCategory();
+      setCategories([{ categoryId: 0, categoryName: 'All' }, ...categoryResponse]);
+
+      // Gọi API để lấy danh sách sản phẩm
+      const productResponse = await axios.get('https://bfrsserver.azurewebsites.net/api/Products/allProductsAvaiable', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const fetchedProducts = productResponse.data.map((product: any) => ({
+        productId: product.productId,
+        name: product.productName,
+        price: product.productPrice,
+        imageUrl: product.img,
+        categoryId: product.categoryId,
+        quantity: product.quantity,
+      }));
+      setProducts(fetchedProducts);
+      setFilteredProducts(fetchedProducts);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [])
+  );
+
+
+  const handleSearch = (query: string) => {
+    const filtered = products.filter((product) =>
+      product.productId.toLowerCase().includes(query.toLowerCase()) 
+    );
+    setFilteredProducts(filtered);
+  };
+
+  const handleCategorySelect = (index: number) => {
+    setCategoryIndex(index);
+    if (index === 0) {
+      setFilteredProducts(products);
+    } else {
+      const selectedCategoryId = categories[index].categoryId;
+      const filtered = products.filter(product => product.categoryId === selectedCategoryId);
+      setFilteredProducts(filtered);
+    }
+  };
+
+  return (
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <SafeAreaView style={{ paddingVertical: 24, gap: 24 }}>
+        {/* Header Section */}
+        {renderGreeting()}
         {/* Search Section */}
-        <SearchBar />
+        {/* <SearchCustomer onSearch={handleSearch} /> */}
+        <SearchProduct onSearch={handleSearch}/>
         {/* Grid Jewelries View */}
         <View style={{ paddingHorizontal: 3 }}>
           <View
@@ -186,13 +234,13 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
             }}
           >
             <Text
-              style={{ fontSize: 20, fontWeight: "700", color: colors.text }}
+              style={{ fontSize: 20, fontWeight: "700", color: colors.text, marginLeft: 20 }}
             >
               Đồ trang sức mới
             </Text>
-            <TouchableOpacity>
-              <Text style={{ color: colors.primary }}>See All</Text>
-            </TouchableOpacity>
+            {/* <TouchableOpacity style={{backgroundColor: 'red'}} onPress={() => setCategoryIndex(0)}>
+              <Text style={{ color: colors.primary  }}>See All</Text>
+            </TouchableOpacity> */}
           </View>
           {/* Card Section */}
           <ScrollView
@@ -236,7 +284,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
                 entering={FadeInUp.delay(600).duration(1000).springify()}
               >
                 <TouchableOpacity
-                  onPress={() => setCategoryIndex(index)}
+                  onPress={() => handleCategorySelect(index)}
                   style={{
                     backgroundColor: isSelected ? colors.primary : colors.card,
                     paddingHorizontal: 20,
@@ -274,10 +322,10 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
               entering={FadeInDown.delay(600).duration(1000).springify()}
               style={{ padding: 6 }}
             >
-              <TouchableOpacity onPress={() => navigation.navigate("Details", { id: item.id })}>
+              <TouchableOpacity onPress={() => navigation.navigate("Details", { id: item.productId })}>
                 <View
                   style={{
-                    aspectRatio: i === 0 ? 1 : 2 / 3,
+                    aspectRatio: i === 0 ? 2/3 : 2 / 3,
                     position: "relative",
                     overflow: "hidden",
                     borderRadius: 24,
@@ -314,6 +362,22 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
                         }}
                       >
                         {item.name}
+                      </Text>
+                      <Text
+                        style={{
+                          flex: 1,
+                          fontSize: 10,
+                          fontWeight: "600",
+                          color: "#000000",
+                          textShadowColor: "rgba(0,0,0,0.2)",
+                          textShadowOffset: {
+                            height: 1,
+                            width: 0,
+                          },
+                          textShadowRadius: 4,
+                        }}
+                      >
+                        {item.productId}
                       </Text>
                     </View>
                     <View style={{ flex: 1 }} />

@@ -15,17 +15,25 @@ export const getCart = async () => {
 export const addToCart = async (product) => {
   try {
     const cart = await getCart();
+    const isDuplicate = cart.some(item => item.productId === product.productId);
+
+    if (isDuplicate) {
+      return false; 
+    }
+
     const newCart = [...cart, product];
     await AsyncStorage.setItem(CART_KEY, JSON.stringify(newCart));
+    return true; // Indicate that the product was added successfully
   } catch (error) {
     console.error('Failed to add to cart:', error);
+    return false; // Indicate that there was an error adding the product
   }
 };
 
 export const removeFromCart = async (productId) => {
   try {
     const cart = await getCart();
-    const updatedCart = cart.filter(item => item.id !== productId);
+    const updatedCart = cart.filter(item => item.productId !== productId);
     await AsyncStorage.setItem(CART_KEY, JSON.stringify(updatedCart));
   } catch (error) {
     console.error('Failed to remove item from cart:', error);

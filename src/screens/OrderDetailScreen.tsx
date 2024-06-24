@@ -7,6 +7,7 @@ import { GetOrderDetail } from '../api/api';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { addToCartBuyBack } from '../utils/cartBuyBack';
+import { GetOrderList, GetProcessingOrderList, cancelOrder, deliverOrder } from '../api/api';
 
 type OrderDetailScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'OrderDetail'>;
 
@@ -32,9 +33,40 @@ const OrderDetailScreen: React.FC = () => {
     fetchOrderDetail();
   }, [orderSellId]);
 
+  // const handleAddToCart = async (product: any) => {
+  //   await addToCartBuyBack(product);
+  //   Alert.alert('Thêm vào giỏ hàng', `Sản phẩm ${product.productName} đã được thêm vào giỏ hàng.`);
+  // };
+
   const handleAddToCart = async (product: any) => {
-    await addToCartBuyBack(product);
-    Alert.alert('Thêm vào giỏ hàng', `Sản phẩm ${product.productName} đã được thêm vào giỏ hàng.`);
+    const success = await addToCartBuyBack(product);
+    if (success) {
+      Alert.alert('Thêm vào giỏ hàng', `Sản phẩm ${product.productName} đã được thêm vào giỏ hàng.`);
+    } else {
+      Alert.alert('Sản phẩm đã tồn tại', 'Sản phẩm này đã có trong giỏ hàng.');
+    }
+  };
+
+  const handleDelivery = async () => {
+    try {
+      await deliverOrder(orderSellId);
+      Alert.alert('Success', 'Order marked as delivered.');
+      const data = await GetOrderDetail(orderSellId);
+      setOrderDetail(data);
+    } catch (error) {
+      Alert.alert('Error', 'Failed to mark order as delivered.');
+    }
+  };
+
+  const handleCancel = async () => {
+    try {
+      await cancelOrder(orderSellId);
+      Alert.alert('Success', 'Order cancelled.');
+      const data = await GetOrderDetail(orderSellId);
+      setOrderDetail(data);
+    } catch (error) {
+      Alert.alert('Error', 'Failed to cancel order.');
+    }
   };
 
   const getStatusStyle = (status: string) => {
@@ -78,13 +110,15 @@ const OrderDetailScreen: React.FC = () => {
                 <Image source={{ uri: detail.productImage }} style={styles.productImage} />
                 <View style={styles.productInfo}>
                   <Text style={styles.productName}>{detail.productName}</Text>
-                  <Text style={styles.productQuantity}>Mã sản phẩm: {detail.productId}</Text>
+                  <Text style={styles.productQuantity}>{detail.productId}</Text>
                   <Text style={styles.productPrice}>Giá: {detail.price.toLocaleString()} VND</Text>
                   <Text style={styles.productQuantity}>Số lượng: {detail.quantity}</Text>
-                  <TouchableOpacity style={styles.addButton} onPress={() => handleAddToCart(detail)}>
-                    <FontAwesome5 name="cart-plus" size={24} color="#FFFFFF" />
-                    <Text style={styles.addButtonText}>Thêm vào giỏ hàng</Text>
-                  </TouchableOpacity>
+                  {orderDetail.status === "Delivered" && (
+                    <TouchableOpacity style={styles.addButton} onPress={() => handleAddToCart(detail)}>
+                      <FontAwesome5 name="cart-plus" size={24} color="#FFFFFF" />
+                      <Text style={styles.addButtonText}>Thêm vào giỏ hàng</Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
               </View>
             ))}
@@ -101,6 +135,19 @@ const OrderDetailScreen: React.FC = () => {
                 </View>
               </View>
             ))}
+          </View>
+          {/* Nút ở cuối màn hình */}
+          <View style={styles.buttonContainer}>
+            {orderDetail.status === 'Paid' && (
+              <TouchableOpacity style={[styles.button, styles.deliveryButton]} onPress={handleDelivery}>
+                <Text style={styles.buttonText}>Delivery</Text>
+              </TouchableOpacity>
+            )}
+            {orderDetail.status === 'Processing' && (
+              <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={handleCancel}>
+                <Text style={styles.buttonText}>Cancel</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       )}
@@ -174,6 +221,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   productName: {
+    width: 200,
     fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
@@ -193,7 +241,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     backgroundColor: '#FF6347',
     paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingHorizontal: 8,
     borderRadius: 8,
   },
   addButtonText: {
@@ -235,6 +283,27 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 4,
     color: '#999',
+  },buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  button: {
+    flex: 1,
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
+  deliveryButton: {
+    backgroundColor: '#4CAF50',
+  },
+  cancelButton: {
+    backgroundColor: '#F44336',
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
   },
 });
 
