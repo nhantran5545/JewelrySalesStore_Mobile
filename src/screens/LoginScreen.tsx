@@ -10,7 +10,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import React, { useState } from "react";
-import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
+import { Ionicons, SimpleLineIcons, AntDesign } from "@expo/vector-icons";
 import { useTheme } from "@react-navigation/native";
 import { colors } from "../utils/color";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
@@ -36,7 +36,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('https://bfrsserver.azurewebsites.net/api/Accounts/login', {
+      const response = await axios.post('https://jssatsapi20240629152002.azurewebsites.net/api/Accounts/login', {
         username,
         password
       });
@@ -129,17 +129,13 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                 onChangeText={setUsername}
                 value={username}
               />
-              <Ionicons
-                name={"mail-outline"}
-                size={24}
-                color={theme.colors.text}
+              <AntDesign name="user" size={24} color={theme.colors.text}
                 style={{
                   position: "absolute",
                   left: 12,
                   top: 12,
                   opacity: 0.5,
-                }}
-              />
+                }}/>
             </Animated.View>
             <Animated.View
               entering={FadeInDown.delay(400).duration(1000).springify()}
@@ -199,7 +195,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             <Animated.View
               entering={FadeInDown.delay(600).duration(1000).springify()}
             >
-              <PrimaryButton label="Log In" onPress={handleLogin} />
+              <PrimaryButton label="Đăng Nhập" onPress={handleLogin} />
             </Animated.View>
           </View>
         </View>

@@ -140,8 +140,8 @@ const CreateProductScreen: React.FC = () => {
   ];
 
   const originOptions = [
-    { label: 'Natural', value: 'Natural' },
-    { label: 'Artificial', value: 'Artificial' }
+    { label: 'Nature', value: 'Nature' },
+    { label: 'Lab', value: 'Lab' }
   ];
 
   const colorOptions = [

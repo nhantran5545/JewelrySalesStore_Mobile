@@ -21,6 +21,8 @@ import OrderListPaidScreen from "../screens/OrderListPaidScreen";
 import ChooseCustomer from "../screens/ChooseCustomer";
 import CreateOrderBuyBackStoreScreen from "../screens/CreateOrderBuyBackStoreScreen";
 import LoginScreen from "../screens/LoginScreen";
+import OrderListBuyBackScreen from "../screens/OrderListBuyBackScreen";
+import OrderDetailBuyBackScreen from "../screens/OrderDetailBuyBackScreen";
 
 type Customer = {
   customerId: string;
@@ -56,6 +58,8 @@ export type RootStackParamList = {
   ChooseCustomer: undefined;
   CreateInvoiceBuyBackStore: { customer: Customer };
   Login: undefined;
+  OrderListBuyBack: undefined;
+  OrderDetailBuyBack: {orderBuyBackId: number};
 };
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -218,6 +222,23 @@ const RootNavigator = () => {
           headerShown: true,
           title: 'Tạo Hóa Đơn Mua Lại',
           headerTitleAlign: 'center',
+        }}
+      />
+       <RootStack.Screen
+        name="OrderListBuyBack"
+        component={OrderListBuyBackScreen}
+        options={{
+          headerShown: true,
+          title: 'Danh sách hóa đơn mua lại',
+          headerTitleAlign: 'center',
+        }}
+      />
+      <RootStack.Screen
+        name="OrderDetailBuyBack"
+        component={OrderDetailBuyBackScreen}
+        options={{
+          headerShown: true,
+          title: 'Chi tiết hóa đon mua lại',
         }}
       />
     </RootStack.Navigator>

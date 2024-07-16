@@ -110,7 +110,11 @@ const SearchProduct: React.FC<SearchProductProps> = ({ onSearch }) => {
               style={StyleSheet.absoluteFillObject}
             />
             {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
-            <Button title="Close" onPress={() => setIsScannerVisible(false)} />
+            <View style={styles.closeButtonContainer}>
+              <TouchableOpacity onPress={() => setIsScannerVisible(false)} style={styles.closeButton}>
+                <Text style={styles.closeButtonText}>Close</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </Modal>
       )}
@@ -125,5 +129,23 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     justifyContent: "center",
+    paddingBottom: 20, // Add padding to make space for the button
+  },
+  closeButtonContainer: {
+    position: "absolute",
+    bottom: 20,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+  },
+  closeButton: {
+    backgroundColor: "blue",
+    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  closeButtonText: {
+    color: "white",
+    textAlign: "center",
   },
 });

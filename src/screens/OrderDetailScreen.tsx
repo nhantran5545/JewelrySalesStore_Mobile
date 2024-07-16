@@ -33,11 +33,6 @@ const OrderDetailScreen: React.FC = () => {
     fetchOrderDetail();
   }, [orderSellId]);
 
-  // const handleAddToCart = async (product: any) => {
-  //   await addToCartBuyBack(product);
-  //   Alert.alert('Thêm vào giỏ hàng', `Sản phẩm ${product.productName} đã được thêm vào giỏ hàng.`);
-  // };
-
   const handleAddToCart = async (product: any) => {
     const success = await addToCartBuyBack(product);
     if (success) {
@@ -71,16 +66,25 @@ const OrderDetailScreen: React.FC = () => {
 
   const getStatusStyle = (status: string) => {
     switch (status) {
-      case 'Completed':
-        return { backgroundColor: '#4CAF50', color: '#FFF' };
       case 'Processing':
-        return { backgroundColor: '#FFC107', color: '#000' };
+        return { backgroundColor: '#ff7875', color: '#000' };
+      case 'Paid':
+        return { backgroundColor: '#ffa940', color: '#000' };
+      case 'Approval':
+        return { backgroundColor: '#36cfc9', color: '#000' };
+      case 'Approved':
+        return { backgroundColor: '#4096ff', color: '#FFF' };
+      case 'Delivered':
+        return { backgroundColor: '#95de64', color: '#000' };
       case 'Cancelled':
-        return { backgroundColor: '#F44336', color: '#FFF' };
+        return { backgroundColor: '#595959', color: '#FFF' };
       default:
-        return { backgroundColor: '#607D8B', color: '#FFF' };
+        return { backgroundColor: '#9E9E9E', color: '#FFF' };
     }
   };
+  
+
+
 
   if (loading) {
     return (

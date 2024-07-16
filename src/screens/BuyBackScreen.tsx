@@ -21,7 +21,6 @@ const BuyBackScreen: React.FC = () => {
   const handleProductInStore = () => {
     // Chuyển đến trang dành cho Khách của Cửa Hàng
     navigation.navigate('OrderList');
-    // alert('Mua sản phẩm từ cửa hàng');
   };
 
   return (

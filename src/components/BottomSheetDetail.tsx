@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useTheme } from "@react-navigation/native";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import BottomSheet from "@gorhom/bottom-sheet";
+import { addToCart, getCart } from "../utils/cartUtil";
 
 // Define the Product type if not already defined
 type Product = {
@@ -32,7 +33,9 @@ const BottomSheetDetail = ({ product }: BottomSheetDetailProps) => {
   const [count, setCount] = useState(1);
 
   const handleAddToCart = async () => {
-    // await addToCart(product);
+    // await addToCart();
+    // const cart = await getCart();
+    // console.log(cart);
     // alert('Sản Phẩm đã thêm vào giỏ hàng');
   };
 

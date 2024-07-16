@@ -4,8 +4,8 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RootStackParamList } from '../navigators/RootNavigator';
-import { FontAwesome } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 
 // Define Product type
 type Product = {
@@ -77,51 +77,59 @@ const ProductListScreen: React.FC = () => {
   };
 
   const handleNext = () => {
-    // alert('Chức năng chưa được thực hiện');
     navigation.navigate('GuestCustomer');
   };
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={products}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.productContainer}>
-            <Text style={styles.productName}>Loại: {item.productType}</Text>
-            {item.material && (
-              <Text style={styles.productName}>Loại Vàng: {item.material}</Text>
+      {products.length > 0 ? (
+        <>
+          <FlatList
+            data={products}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View style={styles.productContainer}>
+                <Text style={styles.productName}>Loại: {item.productType}</Text>
+                {item.material && (
+                  <Text style={styles.productName}>Loại Vàng: {item.material}</Text>
+                )}
+                <Text style={styles.productName}>Tên sản phẩm: {item.jewelryType}</Text>
+                {item.gram && (
+                  <Text style={styles.productDetail}>Gram: {item.gram} gram</Text>
+                )}
+                {item.chiVang && (
+                  <Text style={styles.productDetail}>Chỉ Vàng: {item.chiVang} Chỉ</Text>
+                )}
+                {item.carat && (
+                  <Text style={styles.productDetail}>Carat: {item.carat} carat</Text>
+                )}
+                {item.origin && (
+                  <Text style={styles.productDetail}>Origin: {item.origin}</Text>
+                )}
+                {item.color && (
+                  <Text style={styles.productDetail}>Color: {item.color}</Text>
+                )}
+                {item.clarity && (
+                  <Text style={styles.productDetail}>Clarity: {item.clarity}</Text>
+                )}
+                {item.cut && (
+                  <Text style={styles.productDetail}>Cut: {item.cut}</Text>
+                )}
+                <Text style={styles.productPrice}>Giá: {item.price.toLocaleString()} VND</Text>
+              </View>
             )}
-            <Text style={styles.productName}>Tên sản phẩm: {item.jewelryType}</Text>
-            {item.gram && (
-              <Text style={styles.productDetail}>Gram: {item.gram} gram</Text>
-            )}
-            {item.chiVang && (
-              <Text style={styles.productDetail}>Chỉ Vàng: {item.chiVang} Chỉ</Text>
-            )}
-            {item.carat && (
-              <Text style={styles.productDetail}>Carat: {item.carat} carat</Text>
-            )}
-            {item.origin && (
-              <Text style={styles.productDetail}>Origin: {item.origin}</Text>
-            )}
-            {item.color && (
-              <Text style={styles.productDetail}>Color: {item.color}</Text>
-            )}
-            {item.clarity && (
-              <Text style={styles.productDetail}>Clarity: {item.clarity}</Text>
-            )}
-            {item.cut && (
-              <Text style={styles.productDetail}>Cut: {item.cut}</Text>
-            )}
-            <Text style={styles.productPrice}>Giá: {item.price.toLocaleString()} VND</Text>
-          </View>
-        )}
-        contentContainerStyle={styles.listContainer}
-      />
-      <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-        <Text style={styles.nextButtonText}>Bước Tiếp Theo</Text>
-      </TouchableOpacity>
+            contentContainerStyle={styles.listContainer}
+          />
+          <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+            <Text style={styles.nextButtonText}>Bước Tiếp Theo</Text>
+          </TouchableOpacity>
+        </>
+      ) : (
+        <View style={styles.emptyContainer}>
+          <FontAwesome name="exclamation-circle" size={50} color="#999" />
+          <Text style={styles.emptyText}>Chưa có sản phẩm nào</Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -192,6 +200,16 @@ const styles = StyleSheet.create({
   },
   clearButton: {
     marginRight: 16,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    marginTop: 16,
+    fontSize: 18,
+    color: '#999',
   },
 });
 

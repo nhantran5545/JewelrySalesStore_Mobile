@@ -33,22 +33,19 @@ const AVATAR_URL =
 
 const cardData = [
   {
-    id: "123",
-    price: 13050,
-    imageUrl: "https://sinhdien.com.vn/public/thumbs/IMG_0022.jpg",
-    name: "Nhẫn 1"
+    id: "luxury",
+    imageUrl: "https://bizweb.dktcdn.net/100/202/714/products/3-9ffb16da-fd33-4782-8d07-b10d6d0485a0.jpg?v=1509958128110",
+    title: "Sang Trọng"
   },
   {
-    id: "456",
-    price: 12020,
-    imageUrl: "https://sinhdien.com.vn/public/thumbs/IMG_0022.jpg",
-    name: "Nhẫn 2"
+    id: "sparkling",
+    imageUrl: "https://img.lovepik.com/photo/40038/7995.jpg_wh860.jpg",
+    title: "Lấp Lánh"
   },
   {
-    id: "789",
-    price: 17000,
-    imageUrl: "https://sinhdien.com.vn/public/thumbs/IMG_0022.jpg",
-    name: "Nhẫn 3"
+    id: "elegant",
+    imageUrl: "https://eropi.com/media/wysiwyg/bo_trang_suc/bo-trang-suc-bac-nice-flower-pearl_2_.JPG",
+    title: "Quý Phái"
   },
 ];
 
@@ -137,7 +134,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
               Khám phá trang các trang sức phù hợp
             </Text>
           </View>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={{
               width: 52,
               aspectRatio: 1,
@@ -149,7 +146,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
             }}
           >
             <Icons name="notifications" size={24} color={colors.text} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </Animated.View>
       );
     }
@@ -170,7 +167,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
       setCategories([{ categoryId: 0, categoryName: 'All' }, ...categoryResponse]);
 
       // Gọi API để lấy danh sách sản phẩm
-      const productResponse = await axios.get('https://bfrsserver.azurewebsites.net/api/Products/allProductsAvaiable', {
+      const productResponse = await axios.get('https://jssatsapi20240629152002.azurewebsites.net/api/Products/allProductsAvaiable', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -215,6 +212,11 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
     }
   };
 
+  const handleSeeAll = () => {
+    setFilteredProducts(products);
+    setCategoryIndex(0); 
+  };
+
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <SafeAreaView style={{ paddingVertical: 24, gap: 24 }}>
@@ -238,12 +240,12 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
             >
               Đồ trang sức mới
             </Text>
-            {/* <TouchableOpacity style={{backgroundColor: 'red'}} onPress={() => setCategoryIndex(0)}>
-              <Text style={{ color: colors.primary  }}>See All</Text>
-            </TouchableOpacity> */}
+            <TouchableOpacity style={{backgroundColor: 'black', borderRadius: 10, padding: 10, marginRight: 10}} onPress={() => handleSeeAll() }>
+              <Text style={{ color: 'white'}}>See All</Text>
+            </TouchableOpacity>
           </View>
-          {/* Card Section */}
-          <ScrollView
+         {/* Card Section */}
+         <ScrollView
             showsHorizontalScrollIndicator={false}
             horizontal
             style={{ height: 200 }}
@@ -258,9 +260,8 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
                     onPress={() =>
                       navigation.navigate("Details", { id: card.id })
                     }
-                    price={card.price}
                     imageUrl={card.imageUrl}
-                    name={card.name}
+                    title={card.title}
                   />
                 </View>
               ))}
@@ -363,6 +364,24 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
                       >
                         {item.name}
                       </Text>
+                      {/* <Text
+                        style={{
+                          flex: 1,
+                          fontSize: 10,
+                          fontWeight: "600",
+                          color: "#000000",
+                          textShadowColor: "rgba(0,0,0,0.2)",
+                          textShadowOffset: {
+                            height: 1,
+                            width: 0,
+                          },
+                          textShadowRadius: 4,
+                        }}
+                      >
+                        {item.productId}
+                      </Text> */}
+                    </View>
+                    <View style={{ flexDirection: "row", gap: 8, padding: 4 }}>
                       <Text
                         style={{
                           flex: 1,
@@ -430,15 +449,69 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
 
 export default HomeScreen;
 
+// const Card = ({
+//   price,
+//   imageUrl,
+//   name,
+//   onPress,
+// }: {
+//   price: number;
+//   imageUrl: string;
+//   name: string;
+//   onPress?: () => void;
+// }) => {
+//   return (
+//     <TouchableOpacity
+//       onPress={onPress}
+//       style={{
+//         flex: 1,
+//         position: "relative",
+//         overflow: "hidden",
+//         borderRadius: 24,
+//       }}
+//     >
+//       <Image
+//         source={{
+//           uri: imageUrl,
+//         }}
+//         resizeMode="cover"
+//         style={{
+//           position: "absolute",
+//           top: 0,
+//           left: 0,
+//           bottom: 0,
+//           right: 0,
+//         }}
+//       />
+//       <View
+//         style={{
+//           position: "absolute",
+//           left: 12,
+//           top: 12,
+//           paddingHorizontal: 12,
+//           paddingVertical: 8,
+//           backgroundColor: "rgba(0,0,0,0.25)",
+//           borderRadius: 100,
+//         }}
+//       >
+//         <Text style={{ fontSize: 14, fontWeight: "600", color: "#fff" }}>
+//           {name}
+//         </Text>
+//         <Text style={{ fontSize: 14, fontWeight: "600", color: "#fff", marginTop: 120 }}>
+//           {price} VND
+//         </Text>
+//       </View>
+//     </TouchableOpacity>
+//   );
+// };
+
 const Card = ({
-  price,
   imageUrl,
-  name,
+  title,
   onPress,
 }: {
-  price: number;
   imageUrl: string;
-  name: string;
+  title: string;
   onPress?: () => void;
 }) => {
   return (
@@ -475,11 +548,8 @@ const Card = ({
           borderRadius: 100,
         }}
       >
-        <Text style={{ fontSize: 14, fontWeight: "600", color: "#fff" }}>
-          {name}
-        </Text>
-        <Text style={{ fontSize: 14, fontWeight: "600", color: "#fff", marginTop: 120 }}>
-          {price} VND
+        <Text style={{ fontSize: 18, fontWeight: "600", color: "#fff" }}>
+          {title}
         </Text>
       </View>
     </TouchableOpacity>

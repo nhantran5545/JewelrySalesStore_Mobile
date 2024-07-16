@@ -333,6 +333,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     name: {
+        width: 140,
         fontSize: 16,
         fontWeight: 'bold',
     },
@@ -341,6 +342,7 @@ const styles = StyleSheet.create({
         color: '#888888',
     },
     price: {
+        width: 220,
         fontSize: 16,
         color: '#888888',
     },

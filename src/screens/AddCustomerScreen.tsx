@@ -30,7 +30,7 @@ const AddCustomerScreen: React.FC = () => {
 
       const response = await createCustomer(customer);
 
-      Alert.alert('Success', 'Customer Created Successfully');
+      Alert.alert('Thành Công', 'Khách Hàng đã được tạo');
       navigation.navigate('CustomerList');
     } catch (error) {
       console.error(error);

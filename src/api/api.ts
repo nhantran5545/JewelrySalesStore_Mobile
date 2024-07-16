@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Tạo instance của axios
 const api = axios.create({
-  baseURL: 'https://bfrsserver.azurewebsites.net/api',
+  baseURL: 'https://jssatsapi20240629152002.azurewebsites.net/api',
 });
 
 // Thêm interceptor để tự động đính kèm token vào headers
@@ -214,6 +214,37 @@ export const GetProcessingOrderList = async () => {
   } catch (error) {
     console.error('Error order Processing:', error);
     throw error;
+  }
+};
+
+// Hàm gọi order Buy Back List
+export const GetOrderBuyBackList = async () => {
+  try {
+    const response = await api.get('/OrderBuyBacks');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const cancelBuyBackOrder = async (orderBuyBackId: number) => {
+  try {
+    const response = await api.put(`/OrderBuyBacks/cancel?orderBuyBackId=${orderBuyBackId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error cancelling buyback order:', error);
+    throw error;
+  }
+};
+
+//Hàm gọi API để lấy Order Detail Buy Back
+export const GetOrderDetailBuyBack = async (orderBuyBackId: number) => {
+  try {
+    // console.log(orderBuyBackId);
+    const response = await api.get(`/OrderBuyBacks/${orderBuyBackId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error('Error fetching order detail BuyBack');
   }
 };
 

@@ -12,6 +12,7 @@ import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import { useTheme } from "@react-navigation/native";
 import { colors } from "../utils/color";
 import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
+import { ScrollView } from 'react-native-gesture-handler';
 
 type CreateInvoiceScreenRouteProp = RouteProp<RootStackParamList, 'CreateInvoice'>;
 
@@ -87,96 +88,98 @@ const CreateInvoiceScreen: React.FC = () => {
 
       await createInvoice(invoice);
 
-      Alert.alert('Success', 'Invoice Created Successfully');
+      Alert.alert('Thành Công', 'Hóa đơn được tạo thành công');
       await clearCart(); // Clear the cart
       navigation.navigate('TabsStack', { screen: 'Home' });
     } catch (error) {
       console.error(error);
-      Alert.alert('Error', 'An error occurred while creating invoice');
+      Alert.alert('Lỗi', 'Có Lỗi xảy ra trong quá trình tạo hóa đơn');
     }
   };
 
   const { totalPrice, discountedPrice, discount } = getTotalPrice();
 
   return (
+
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{ flex: 1 }}
     >
-      <View style={styles.container}>
-        <View style={styles.customerInfo}>
-          <View style={styles.titleCustomerContainer}>
-            <Text style={styles.titleCustomer}>Thông Tin Khách Hàng</Text>
-            <Text style={styles.iconRank}>
-              {customer.tierName && tierIcons[customer.tierName]}
+        <View style={styles.container}>
+          <View style={styles.customerInfo}>
+            <View style={styles.titleCustomerContainer}>
+              <Text style={styles.titleCustomer}>Thông Tin Khách Hàng</Text>
+              <Text style={styles.iconRank}>
+                {customer.tierName && tierIcons[customer.tierName]}
+              </Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={styles.customerName}>{customer.name}</Text>
+              <Text style={styles.customerPhone}>{customer.phone}</Text>
+            </View>
+            <Text style={styles.customerAddress}>{customer.address}</Text>
+          </View>
+          {/* Display cart products here */}
+          <View style={styles.cartContainer}>
+            <Text style={styles.sectionTitle}>
+              <FontAwesome name="shopping-bag" size={24} color="#FF6347" /> Giỏ Hàng
             </Text>
+            <FlatList
+              data={cartItems}
+              renderItem={renderCartItem}
+              keyExtractor={item => item.productId}
+              contentContainerStyle={styles.listContainer}
+            />
           </View>
-          <View style={styles.row}>
-            <Text style={styles.customerName}>{customer.name}</Text>
-            <Text style={styles.customerPhone}>{customer.phone}</Text>
+          <Animated.View
+            entering={FadeInDown.delay(200).duration(1000).springify()}
+            style={{ position: "relative", width: "100%" }}
+          >
+            <TextInput
+              placeholder="Nhập lý do giảm giá"
+              style={{
+                fontSize: 16,
+                fontWeight: "500",
+                color: theme.colors.text,
+                paddingLeft: 48,
+                paddingRight: 12,
+                height: 48,
+                borderRadius: 12,
+                backgroundColor: theme.colors.background,
+                width: "100%",
+              }}
+              onChangeText={setPromotionReason}
+              value={promotionReason}
+            />
+            <Ionicons
+              name={"mail-outline"}
+              size={24}
+              color={theme.colors.text}
+              style={{
+                position: "absolute",
+                left: 12,
+                top: 12,
+                opacity: 0.5,
+              }}
+            />
+          </Animated.View>
+          {/* Display promotions and final price here */}
+          <View style={styles.promotionContainer}>
+            <View style={styles.promotionInfo}>
+              <Text style={styles.promotion}>
+                <Fontisto name="shopping-sale" size={16} color="#FF6347" /> Khuyến Mãi: {customer.discountPercent}%
+              </Text>
+              <Text style={styles.price}>Tổng Giá: {totalPrice} VND</Text>
+              <Text style={styles.discount}>Giảm giá: {discount} VND</Text>
+              <Text style={styles.finalPrice}>Giá thanh toán: {discountedPrice} VND</Text>
+            </View>
+            <TouchableOpacity style={styles.button} onPress={handleCreateInvoice}>
+              <Text style={styles.buttonText}>Tạo Hóa Đơn</Text>
+            </TouchableOpacity>
           </View>
-          <Text style={styles.customerAddress}>{customer.address}</Text>
         </View>
-        {/* Display cart products here */}
-        <View style={styles.cartContainer}>
-          <Text style={styles.sectionTitle}>
-            <FontAwesome name="shopping-bag" size={24} color="#FF6347" /> Giỏ Hàng
-          </Text>
-          <FlatList
-            data={cartItems}
-            renderItem={renderCartItem}
-            keyExtractor={item => item.productId}
-            contentContainerStyle={styles.listContainer}
-          />
-        </View>
-        <Animated.View
-          entering={FadeInDown.delay(200).duration(1000).springify()}
-          style={{ position: "relative", width: "100%" }}
-        >
-          <TextInput
-            placeholder="Nhập lý do giảm giá"
-            style={{
-              fontSize: 16,
-              fontWeight: "500",
-              color: theme.colors.text,
-              paddingLeft: 48,
-              paddingRight: 12,
-              height: 48,
-              borderRadius: 12,
-              backgroundColor: theme.colors.background,
-              width: "100%",
-            }}
-            onChangeText={setPromotionReason}
-            value={promotionReason}
-          />
-          <Ionicons
-            name={"mail-outline"}
-            size={24}
-            color={theme.colors.text}
-            style={{
-              position: "absolute",
-              left: 12,
-              top: 12,
-              opacity: 0.5,
-            }}
-          />
-        </Animated.View>
-        {/* Display promotions and final price here */}
-        <View style={styles.promotionContainer}>
-          <View style={styles.promotionInfo}>
-            <Text style={styles.promotion}>
-              <Fontisto name="shopping-sale" size={16} color="#FF6347" /> Khuyến Mãi: {customer.discountPercent}%
-            </Text>
-            <Text style={styles.price}>Tổng Giá: {totalPrice} VND</Text>
-            <Text style={styles.discount}>Giảm giá: {discount} VND</Text>
-            <Text style={styles.finalPrice}>Giá thanh toán: {discountedPrice} VND</Text>
-          </View>
-          <TouchableOpacity style={styles.button} onPress={handleCreateInvoice}>
-            <Text style={styles.buttonText}>Tạo Hóa Đơn</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
     </KeyboardAvoidingView>
+
   );
 };
 
@@ -258,7 +261,7 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   listContainer: {
-    flexGrow: 1,
+    flexGrow: 1
   },
   cartItem: {
     flexDirection: 'row',
@@ -288,6 +291,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   promotionContainer: {
+    marginBottom:100,
     padding: 16,
     backgroundColor: '#FFFFFF',
     borderRadius: 8,

@@ -14,7 +14,7 @@ const Menu: React.FC<MenuProps> = ({ navigation }) => {
   };
 
   const goToRepurchasedOrders = () => {
-    // navigation.navigate('RepurchasedOrders');
+    navigation.navigate('OrderListBuyBack');
   };
 
   const goToCartBuyBack = () => {
@@ -60,7 +60,7 @@ const Menu: React.FC<MenuProps> = ({ navigation }) => {
         </View>
       </TouchableOpacity>
       <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-        <Text style={styles.logoutButtonText}>Log Out</Text>
+        <Text style={styles.logoutButtonText}>Thoát</Text>
       </TouchableOpacity>
     </View>
   );
