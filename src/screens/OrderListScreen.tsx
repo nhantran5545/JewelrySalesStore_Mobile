@@ -50,7 +50,7 @@ const OrderListScreen: React.FC = () => {
     if (query) {
       const filteredData = orders.filter(order =>
         order.customerName.toLowerCase().includes(query.toLowerCase()) ||
-        order.customerPhone.includes(query) ||
+        // order.customerPhone.includes(query) ||
         order.orderSellId.toString().includes(query) ||
         order.orderSellDetails.some((detail: any) =>
           detail.productName.toLowerCase().includes(query.toLowerCase())

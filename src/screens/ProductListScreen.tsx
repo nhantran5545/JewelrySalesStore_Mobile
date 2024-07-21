@@ -93,7 +93,9 @@ const ProductListScreen: React.FC = () => {
                 {item.material && (
                   <Text style={styles.productName}>Loại Vàng: {item.material}</Text>
                 )}
-                <Text style={styles.productName}>Tên sản phẩm: {item.jewelryType}</Text>
+                {item.jewelryType && (
+                   <Text style={styles.productName}>Tên sản phẩm: {item.jewelryType}</Text>
+                )}
                 {item.gram && (
                   <Text style={styles.productDetail}>Gram: {item.gram} gram</Text>
                 )}

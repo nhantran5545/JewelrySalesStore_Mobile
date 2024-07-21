@@ -33,10 +33,15 @@ const BottomSheetDetail = ({ product }: BottomSheetDetailProps) => {
   const [count, setCount] = useState(1);
 
   const handleAddToCart = async () => {
-    // await addToCart();
-    // const cart = await getCart();
-    // console.log(cart);
-    // alert('Sản Phẩm đã thêm vào giỏ hàng');
+    try {
+      await addToCart(product);
+      const cart = await getCart();
+      console.log(cart);
+      alert('Sản phẩm đã được thêm vào giỏ hàng');
+    } catch (error) {
+      console.error("Failed to add to cart:", error);
+      alert('Thêm sản phẩm vào giỏ hàng thất bại');
+    }
   };
 
   return (

@@ -18,9 +18,9 @@ type CreateInvoiceScreenRouteProp = RouteProp<RootStackParamList, 'CreateInvoice
 
 interface CartItem {
   productId: string;
-  name: string;
-  price: number;
-  imageUrl: string;
+  productName: string;
+  productPrice: number;
+  img: string;
   quantity: number;
 }
 
@@ -28,7 +28,7 @@ const tierIcons: { [key: string]: JSX.Element } = {
   "Hạng Kim Cương": <FontAwesome name="diamond" size={24} color="#16a0bc" />,
   "Hạng Bạc": <MaterialIcons name="stars" size={24} color="#ada7a7" />,
   "Hạng Vàng": <MaterialIcons name="stars" size={24} color="#fcf302" />,
-  "Hạng Đồng": <MaterialIcons name="stars" size={24} color="#726b055b" />
+  "Hạng Đồng": <MaterialIcons name="stars" size={24} color="#cd7f32" />
 };
 
 const CreateInvoiceScreen: React.FC = () => {
@@ -48,7 +48,7 @@ const CreateInvoiceScreen: React.FC = () => {
   }, []);
 
   const calculateTotalPrice = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    return cartItems.reduce((total, item) => total + item.productPrice * item.quantity, 0);
   };
 
   const getTotalPrice = () => {
@@ -64,11 +64,11 @@ const CreateInvoiceScreen: React.FC = () => {
 
   const renderCartItem = ({ item }: { item: CartItem }) => (
     <View style={styles.cartItem}>
-      <Image source={{ uri: item.imageUrl }} style={styles.image} />
+      <Image source={{ uri: item.img }} style={styles.image} />
       <View style={styles.itemInfo}>
-        <Text style={styles.itemName}>{item.name}</Text>
+        <Text style={styles.itemName}>{item.productName}</Text>
         <Text style={styles.itemName}>{item.productId}</Text>
-        <Text style={styles.itemPrice}>Giá: {item.price.toLocaleString()} VND</Text>
+        <Text style={styles.itemPrice}>Giá: {item.productPrice.toLocaleString()} VND</Text>
         <Text style={styles.itemQuantity}>Số Lượng: {item.quantity}</Text>
       </View>
     </View>

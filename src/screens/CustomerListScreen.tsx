@@ -29,7 +29,7 @@ const tierIcons: { [key: string]: JSX.Element } = {
   "Hạng Kim Cương": <FontAwesome name="diamond" size={24} color="#16a0bc" />,
   "Hạng Bạc": <MaterialIcons name="stars" size={24} color="#ada7a7" />,
   "Hạng Vàng": <MaterialIcons name="stars" size={24} color="#fcf302" />,
-  "Hạng Đồng": <MaterialIcons name="stars" size={24} color="#726b055b" />
+  "Hạng Đồng": <MaterialIcons name="stars" size={24} color="#cd7f32" />
 };
 
 const CustomerListScreen: React.FC = () => {

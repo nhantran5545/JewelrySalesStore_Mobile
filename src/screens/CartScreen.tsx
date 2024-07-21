@@ -8,10 +8,10 @@ import { Fontisto } from '@expo/vector-icons';
 
 type Product = {
   productId: string;
-  name: string;
+  productName: string;
   description: string;
-  price: number;
-  imageUrl: string;
+  productPrice: number;
+  img: string;
   productCode: string;
   material: string;
   color: string;
@@ -39,10 +39,10 @@ const CartScreen: React.FC = () => {
 
   const renderItem = ({ item }: { item: Product }) => (
     <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('Details', { id: item.productId })}>
-      <Image source={{ uri: item.imageUrl }} style={styles.image} />
+      <Image source={{ uri: item.img }} style={styles.image} />
       <View style={styles.infoContainer}>
-        <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.price}>{item.price.toLocaleString()} VND</Text>
+        <Text style={styles.name}>{item.productName}</Text>
+        <Text style={styles.price}>{item.productPrice.toLocaleString()} VND</Text>
         <Text style={styles.quantity}>Số Lượng: {item.quantity}</Text>
       </View>
       <TouchableOpacity onPress={() => handleRemoveFromCart(item.productId)} style={styles.removeButton}>
@@ -77,7 +77,7 @@ const CartScreen: React.FC = () => {
   };
 
   const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => total + item.price, 0).toLocaleString();
+    return cartItems.reduce((total, item) => total + item.productPrice, 0).toLocaleString();
   };
   
   return (

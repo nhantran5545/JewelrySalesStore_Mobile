@@ -174,9 +174,9 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
       });
       const fetchedProducts = productResponse.data.map((product: any) => ({
         productId: product.productId,
-        name: product.productName,
-        price: product.productPrice,
-        imageUrl: product.img,
+        productName: product.productName,
+        productPrice: product.productPrice,
+        img: product.img,
         categoryId: product.categoryId,
         quantity: product.quantity,
       }));
@@ -334,7 +334,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
                 >
                   <Image
                     source={{
-                      uri: item.imageUrl,
+                      uri: item.img,
                     }}
                     resizeMode="cover"
                     style={StyleSheet.absoluteFill}
@@ -362,7 +362,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
                           textShadowRadius: 4,
                         }}
                       >
-                        {item.name}
+                        {item.productName}
                       </Text>
                       {/* <Text
                         style={{
@@ -421,7 +421,7 @@ const HomeScreen = ({ navigation }: TabsStackScreenProps<"Home">) => {
                         }}
                         numberOfLines={2}
                       >
-                        {item.price.toLocaleString()} VND
+                        {item.productPrice.toLocaleString()} VND
                       </Text>
                       <TouchableOpacity
                         onPress={() => handleAddToCart(item)}

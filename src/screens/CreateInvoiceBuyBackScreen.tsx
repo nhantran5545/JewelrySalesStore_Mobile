@@ -66,7 +66,9 @@ const CreateInvoiceBuyBackScreen: React.FC = () => {
       <View style={styles.cartItem}>
         <View style={styles.itemInfo}>
           <Text style={styles.itemName}>Loại: {item.productType}</Text>
-          <Text style={styles.itemName}>Tên sản phẩm: {item.jewelryType}</Text>
+          {item.jewelryType && (
+            <Text style={styles.itemName}>Tên sản phẩm: {item.jewelryType}</Text>
+          )}
           {item.material && (
             <Text style={styles.productDetail}>Loại Vàng: {item.material}</Text>
           )}
@@ -100,7 +102,7 @@ const CreateInvoiceBuyBackScreen: React.FC = () => {
   const handleCreateInvoice = async () => {
     try {
       const buyBackDetails = products.map(product => ({
-        buyBackProductName: product.jewelryType,
+        buyBackProductName: product.jewelryType || "Kim Cương",
         materialId: product.materialId || null,
         quantity: 1,
         weight: product.chiVang ? parseFloat(product.chiVang) * 3.75 : product.gram || null,
@@ -147,7 +149,7 @@ const CreateInvoiceBuyBackScreen: React.FC = () => {
                 {customer.tierName === 'Hạng Kim Cương' && <FontAwesome name="diamond" size={24} color="#16a0bc" />}
                 {customer.tierName === 'Hạng Bạc' && <MaterialIcons name="stars" size={24} color="#ada7a7" />}
                 {customer.tierName === 'Hạng Vàng' && <MaterialIcons name="stars" size={24} color="#fcf302" />}
-                {customer.tierName === 'Hạng Đồng' && <MaterialIcons name="stars" size={24} color="#726b055b" />}
+                {customer.tierName === 'Hạng Đồng' && <MaterialIcons name="stars" size={24} color="#cd7f32" />}
               </>
             )}
           </Text>

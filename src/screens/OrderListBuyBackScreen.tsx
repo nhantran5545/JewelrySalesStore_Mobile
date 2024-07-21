@@ -146,7 +146,7 @@ const OrderListBuyBackScreen: React.FC = () => {
                 <Text style={styles.orderText}>Tổng Tiền {item.finalAmount.toLocaleString()} VND</Text>
               </View>
             </TouchableOpacity>
-            {item.status !== 'Cancelled' && (
+            {item.status === 'Processing' && (
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
                   style={[styles.button, styles.cancelButton]}

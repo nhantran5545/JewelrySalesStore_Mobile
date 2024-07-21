@@ -92,9 +92,27 @@ const CreateProductScreen: React.FC = () => {
         setDiamondPrice(response.price);
       }
     } catch (error) {
-      Alert.alert('Error calculating diamond price', 'Please try again later.');
+      Alert.alert('Kim cương với thông tin chưa có giá', 'Vui lòng chọn thông số khác.');
     }
   };
+
+  const resetGoldFields = () => {
+    setMaterial('');
+    setMaterialId(null);
+    setGram('');
+    setChiVang('');
+    setGoldPrice(0);
+  };
+
+  const resetDiamondFields = () => {
+    setCarat('');
+    setOrigin('');
+    setColor('');
+    setClarity('');
+    setCut('');
+    setDiamondPrice(0);
+  };
+  
 
   const handleSaveProduct = async () => {
     const product = {
@@ -121,9 +139,19 @@ const CreateProductScreen: React.FC = () => {
   };
 
   const handleProductTypeChange = (type: string) => {
+    // setProductType(type);
+    // setGoldPrice(0);
+    // setDiamondPrice(0);
+    // setPrice(0);
     setProductType(type);
-    setGoldPrice(0);
-    setDiamondPrice(0);
+    if (type === 'Trang Sức') {
+      resetGoldFields();
+      resetDiamondFields();
+    } else if (type === 'Vàng' || type === 'Bạc') {
+      resetDiamondFields();
+    } else if (type === 'Kim Cương') {
+      resetGoldFields();
+    }
     setPrice(0);
   };
 
